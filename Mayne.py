@@ -286,12 +286,12 @@ def main():
     if all_results:
         with open("actief.txt","r+") as f:
             actief = f.readlines()
-            print(actief)
             for item in all_results:
                 if item+"\n" not in actief:
                     f.write(item+"\n")
-            print("Email is onderweg!")
-            email(all_results)
+                    print("Email is onderweg!")
+                    email(all_results)
+
 
 if __name__ == "__main__":
     main()
