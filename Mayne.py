@@ -280,12 +280,18 @@ def main():
 
     #jaap()
 
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results
+    all_results = mvgm_results + pandomo_results
     #print(all_results)
 
     if all_results:
-        print("Email is onderweg!")
-        email(all_results)
+        with open("actief.txt","r+") as f:
+            actief = f.readlines()
+            print(actief)
+            for item in all_results:
+                if item+"\n" not in actief:
+                    f.write(item+"\n")
+            print("Email is onderweg!")
+            email(all_results)
 
 if __name__ == "__main__":
     main()
