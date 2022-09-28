@@ -242,31 +242,31 @@ def email(results):
 
 def main():
     x = 35
-    y = 1100
+    y = 850
     z = 950
 
     #input = Verhuurd/Beschikbaar
-    nova_results = nova("Beschikbaar",x,y,z)
+    #nova_results = nova("Beschikbaar",x,y,z)
 
     #input = Verhuurd/Nieuw in verhuur
-    nulvijf_results = nulvijf("Nieuw in verhuur",x,y,z)
+    #nulvijf_results = nulvijf("Nieuw in verhuur",x,y,z)
 
     #no input possible due to filtering out hired within function
-    solide_results = solide(x,y)
+    #solide_results = solide(x,y)
 
     #input = Nieuw/Onder optie
-    mvgm_results = mvgm("Nieuw",x,y)
+    #mvgm_results = mvgm("Nieuw",x,y)
 
     #input = beschikbaar/onder optie/verhuurd
-    pandomo_results = pandomo("beschikbaar",x,y)
+    pandomo_results = pandomo("onder optie",x,y)
 
     #pararius("Nieuw in verhuur",35,750,850)
 
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results
+    #all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results
     #print(all_results)
 
-    if all_results:
-        email(all_results)
+    #if all_results:
+    #    email(all_results)
 
 if __name__ == "__main__":
     main()
