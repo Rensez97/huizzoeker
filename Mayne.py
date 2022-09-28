@@ -179,6 +179,22 @@ def pandomo(s,x,y):
     return results
 
 
+def jaap():
+    print("jaap checken...")
+    page = 1
+    results = []
+    for i in range(10):
+        url = "https://www.jaap.nl/huurhuizen/groningen/overig+groningen/groningen/p"+str(page)
+        req = requests.get(url)
+        soup = BeautifulSoup(req.text,'html.parser')
+        huizen = soup.find("div", {"class": re.compile("house_result_")})
+        if huizen:
+            for huis in huizen:
+                print(huis)
+        page += 1
+    print("Einde jaap\n")
+    return results
+
 def pararius(s,x,y,z):
     print("Pararius checken...")
     page = 1
@@ -246,27 +262,30 @@ def main():
     z = 950
 
     #input = Verhuurd/Beschikbaar
-    #nova_results = nova("Beschikbaar",x,y,z)
+    nova_results = nova("Beschikbaar",x,y,z)
 
     #input = Verhuurd/Nieuw in verhuur
-    #nulvijf_results = nulvijf("Nieuw in verhuur",x,y,z)
+    nulvijf_results = nulvijf("Nieuw in verhuur",x,y,z)
 
     #no input possible due to filtering out hired within function
-    #solide_results = solide(x,y)
+    solide_results = solide(x,y)
 
     #input = Nieuw/Onder optie
-    #mvgm_results = mvgm("Nieuw",x,y)
+    mvgm_results = mvgm("Nieuw",x,y)
 
     #input = beschikbaar/onder optie/verhuurd
-    pandomo_results = pandomo("onder optie",x,y)
+    pandomo_results = pandomo("beschikbaar",x,y)
 
     #pararius("Nieuw in verhuur",35,750,850)
 
-    #all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results
+    #jaap()
+
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results
     #print(all_results)
 
-    #if all_results:
-    #    email(all_results)
+    if all_results:
+        print("Email is onderweg!")
+        email(all_results)
 
 if __name__ == "__main__":
     main()
