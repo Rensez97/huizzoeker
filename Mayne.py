@@ -365,8 +365,8 @@ def main():
             for item in all_results:
                 if item+"\n" not in actief:
                     f.write(item+"\n")
-                    print("Email is onderweg!")
-                    email(all_results)
+            print("Email is onderweg!")
+            email(all_results)
 
 
 if __name__ == "__main__":
