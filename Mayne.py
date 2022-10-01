@@ -330,7 +330,9 @@ def main():
     x = 35
     y = 850
     z = 950
-
+    
+    print(datetime.datetime.now())
+    
     #input = Verhuurd/Beschikbaar
     nova_results = nova("Beschikbaar",x,y,z)
 
@@ -357,7 +359,7 @@ def main():
     #jaap()
 
     all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results
-    print(datetime.datetime.now(),"\n",all_results)
+    print(all_results)
 
     if all_results:
         with open("actief.txt","r+") as f:
