@@ -179,6 +179,71 @@ def pandomo(s,x,y):
     return results
 
 
+def vdmeulen(s,x,y):
+    print("Van der Meulen makelaars checken...")
+    page = 1
+    results = []
+    for i in range(10):
+        url = "https://www.vandermeulenmakelaars.nl/objecten/page/"+str(page)
+        req = requests.get(url)
+        soup = BeautifulSoup(req.text,'html.parser')
+        huizen = soup.find_all("article", {"class": "property-listing-simple property-listing-simple-1 hentry clearfix"})
+        if huizen:
+            for huis in huizen:
+                #finding square feet
+                opper = huis.find("span", {"class": "meta-item-value"}).text[:-2]
+                #finding costs of house
+                prijs = huis.find("span", {"class": "price"}).text[1:-2].replace(".","")
+                # #finding active status
+                if huis.find("span", {"class": "status"}):
+                    status = huis.find("span", {"class": "status"}).text.strip()
+                else:
+                    status = "Beschikbaar"
+                # #link to page
+                pagina = huis.find('a', href=True)['href']
+                if status == s and int(opper) >= x and int(prijs) <= y:
+                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                    results.append(result)
+        page += 1
+    print("Einde van der Meulen makelaars\n")
+    return results
+
+
+def eentweedriewonen(s,x,y):
+    print("123 wonen checken...")
+    page = 1
+    results = []
+    for i in range(10):
+        url = "https://www.123wonen.nl/huurwoningen/in/groningen/page/"+str(page)
+        req = requests.get(url)
+        soup = BeautifulSoup(req.text,'html.parser')
+        search = soup.find("div", {"class": "row pandlist"})
+        if search:
+            huizen = search.find_all("div", {"class": "pandlist-container"})
+            for huis in huizen:
+                #print(huis)
+                #finding square feet
+                opper = huis.find("span", string=re.compile("m²")).text[:-3]
+                # #finding costs of house
+                prijs = huis.find("div", {"class": "pand-price"}).text[2:-8].replace(".","")
+                # #finding active status
+                if huis.find("span", {"class": re.compile("pand-status")}):
+                    status = huis.find("span", {"class": re.compile("pand-status")}).text
+                    if status == "Tip":
+                        status = "Beschikbaar"
+                else:
+                    status = "Beschikbaar"
+                #link to page
+                pagina = huis['onclick'][15:-2]
+                #print(status,opper,prijs,pagina)
+                if status == s and int(opper) >= x and int(prijs) <= y:
+                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                    results.append(result)
+        page += 1
+    print("Einde 123 wonen\n")
+    return results
+
+
 def jaap():
     print("jaap checken...")
     page = 1
@@ -194,6 +259,7 @@ def jaap():
         page += 1
     print("Einde jaap\n")
     return results
+
 
 def pararius(s,x,y,z):
     print("Pararius checken...")
@@ -238,14 +304,17 @@ def gruno(s,x,y,z):
         huizen = soup.find_all("div", {"class": "rh_list_card__wrap"})
 
 
-def email(results):
+def email(results,alert):
     #print(products, new_products, updated_products)
     message = EmailMessage()
     text = "\n".join(results)
     message.set_content(text)
     message['FROM'] = "huizzoeker@outlook.com"
     message['TO'] = ["rensevdzee@hotmail.com"]
-    message['SUBJECT'] = "Nieuwe huissaus gevonden"
+    if alert == 1:
+        message['SUBJECT'] = "1 nieuwe osso gevonden"
+    if alert > 1:
+        message['SUBJECT'] = str(alert)+" nieuwe ossauws gevonden"
     context = ssl.create_default_context()
     #set up SMTP server
     with smtplib.SMTP('smtp-mail.outlook.com',587) as smtp:
@@ -276,12 +345,18 @@ def main():
     #input = beschikbaar/onder optie/verhuurd
     pandomo_results = pandomo("beschikbaar",x,y)
 
+    #input = Beschikbaar/Optie/Verhuurd
+    vdmeulen_results = vdmeulen("Beschikbaar",x,y)
+
+    #input = Beschikbaar/In optie/Verhuurd
+    eentweedriewonen_results = eentweedriewonen("Beschikbaar",x,y)
+
     #pararius("Nieuw in verhuur",35,750,850)
 
     #jaap()
 
-    all_results = mvgm_results + pandomo_results
-    #print(all_results)
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results
+    print(all_results)
 
     if all_results:
         with open("actief.txt","r+") as f:
