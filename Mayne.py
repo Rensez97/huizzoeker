@@ -331,8 +331,8 @@ def main():
     y = 850
     z = 950
     
-    print(datetime.datetime.now())
-    
+    print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     #input = Verhuurd/Beschikbaar
     nova_results = nova("Beschikbaar",x,y,z)
 
@@ -362,13 +362,15 @@ def main():
     print(all_results)
 
     if all_results:
+        alert = 0
         with open("actief.txt","r+") as f:
             actief = f.readlines()
             for item in all_results:
                 if item+"\n" not in actief:
+                    alert += 1
                     f.write(item+"\n")
-            print("Email is onderweg!")
-            email(all_results)
+        print("Email is onderweg!")
+        email(all_results,alert)
 
 
 if __name__ == "__main__":
