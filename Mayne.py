@@ -245,6 +245,39 @@ def eentweedriewonen(s,x,y):
     return results
 
 
+def wbnn(s,x,y,z):
+    print("Woonbemiddeling Noord-Nederland checken...")
+    page = 1
+    results = []
+    for i in range(1):
+        url = "https://wbnn.nl/index.php?searchphrase=Groningen&search=&search-type=rental&p=huizen"
+        req = requests.get(url)
+        soup = BeautifulSoup(req.text,'html.parser')
+        huizen = soup.find_all("tr", {"class": "houses-list-row"})
+        if huizen:
+            for huis in huizen:
+                #finding square feet
+                opper = huis.find("td", {"data-title": "Oppervlakte"}).text[:-2]
+                #finding costs of house
+                prijs = huis.find("td", {"data-title": "Prijs"}).text[2:-12]
+                inc = huis.find("td", {"data-title": "Prijs"}).text[-7:-2]
+                #finding active status
+                specs = huis.find("td", {"data-title": "Locatie"})
+                status = specs.find("span").text.strip()
+                #link to page
+                site = huis.find("td", {"data-title": "Details"})
+                pagina = site.find("a")['href']
+                print(status,opper,prijs,pagina)
+                if status == s and int(opper) >= x and int(prijs) <= y and inc == "excl.":
+                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
+                    results.append(result)
+                if status == s and int(opper) >= x and int(prijs) <= z and inc == "incl.":
+                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
+                    results.append(result)
+        page += 1
+    print("Einde Woonbemiddeling Noord-Nederland\n")
+    return results
+
 def jaap():
     print("jaap checken...")
     page = 1
@@ -354,23 +387,30 @@ def main():
     #input = Beschikbaar/In optie/Verhuurd
     eentweedriewonen_results = eentweedriewonen("Beschikbaar",x,y)
 
+    #input = Nieuw/Verhuurd/(Optie?)
+    wbnn_results = wbnn("Verhuurd",x,y,z)
+
     #pararius("Nieuw in verhuur",35,750,850)
 
     #jaap()
 
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results
+    #all_results = eentweedriewonen_results
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results
     print(all_results)
 
     if all_results:
         alert = 0
         with open("actief.txt","r+") as f:
             actief = f.readlines()
+            f.truncate(0)
+            f.seek(0)
             for item in all_results:
                 if item+"\n" not in actief:
                     alert += 1
-                    f.write(item+"\n")
+                f.write(item+"\n")
+        f.close()
         print("Email is onderweg!")
-        email(all_results,alert)
+        #email(all_results,alert)
 
 
 if __name__ == "__main__":
