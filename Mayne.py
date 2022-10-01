@@ -5,6 +5,7 @@ import re
 from email.message import EmailMessage
 import ssl
 import smtplib
+import datetime
 
 
 def nova(s,x,y,z):
@@ -356,7 +357,7 @@ def main():
     #jaap()
 
     all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results
-    print(all_results)
+    print(datetime.datetime.now(),"\n",all_results)
 
     if all_results:
         with open("actief.txt","r+") as f:
