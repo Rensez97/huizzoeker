@@ -410,7 +410,7 @@ def main():
                 f.write(item+"\n")
         f.close()
         print("Email is onderweg!")
-        #email(all_results,alert)
+        email(all_results,alert)
 
 
 if __name__ == "__main__":
