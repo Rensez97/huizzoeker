@@ -267,7 +267,6 @@ def wbnn(s,x,y,z):
                 #link to page
                 site = huis.find("td", {"data-title": "Details"})
                 pagina = site.find("a")['href']
-                print(status,opper,prijs,pagina)
                 if status == s and int(opper) >= x and int(prijs) <= y and inc == "excl.":
                     result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
                     results.append(result)
@@ -277,6 +276,7 @@ def wbnn(s,x,y,z):
         page += 1
     print("Einde Woonbemiddeling Noord-Nederland\n")
     return results
+
 
 def jaap():
     print("jaap checken...")
@@ -396,7 +396,8 @@ def main():
 
     #all_results = eentweedriewonen_results
     all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results
-    print(all_results)
+    for item in all_results:
+        print(item)
 
     if all_results:
         alert = 0
@@ -409,8 +410,9 @@ def main():
                     alert += 1
                 f.write(item+"\n")
         f.close()
-        print("Email is onderweg!")
-        email(all_results,alert)
+        if alert > 0:
+            print("Email is onderweg!")
+            email(all_results,alert)
 
 
 if __name__ == "__main__":
