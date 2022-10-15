@@ -32,10 +32,10 @@ def nova(s,x,y,z):
             #link to page
             pagina = huis.find('a', href=True)
             if status[0].text == s and int(opper) >= x and int(prijs) <= y and inc == "exclusief":
-                result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina['href'])
+                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina['href'])
                 results.append(result)
             if status[0].text == s and int(opper) >= x and int(prijs) <= z and inc == "inclusief":
-                result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina['href'])
+                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina['href'])
                 results.append(result)
         page += 1
     print("Einde nova vastgoed\n")
@@ -71,10 +71,10 @@ def nulvijf(s,x,y,z):
             status = huis.find("div", {"class": "object_status_container"})
             pagina = huis.find('a', href=True)
             if status.text.strip() == s and float(opper) >= x and float(prijs) <= y and inc == "excl":
-                result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://050vastgoed.nl"+pagina['href'])
+                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://050vastgoed.nl"+pagina['href'])
                 results.append(result)
             if status.text.strip() == s and float(opper) >= x and float(prijs) <= z and inc == "inc":
-                result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://050vastgoed.nl"+pagina['href'])
+                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://050vastgoed.nl"+pagina['href'])
                 results.append(result)
         page += 10
     print("Einde 050\n")
@@ -104,7 +104,7 @@ def solide(x,y):
                 pagina = huis.find('a', href=True)
                 if prijs.isnumeric():
                     if int(float(opper)) >= x and int(prijs) <= y:
-                        result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina['href'])
+                        result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina['href'])
                         results.append(result)
                 #print(status,opper,prijs,pagina['href'])
             page += 1
@@ -133,7 +133,7 @@ def mvgm(s,x,y):
                 #link to page
                 pagina = huis.find('a', href=True)
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina['href'])
+                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina['href'])
                     results.append(result)
                 #print(status,opper,prijs,pagina['href'])
         page += 1
@@ -172,7 +172,7 @@ def pandomo(s,x,y):
                 pagina = huis.find('a', href=True, attrs={'class': None})
                 pagina = "https://www.pandomo.nl"+pagina['href']
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
                     results.append(result)
                 #print(status,opper,prijs,pagina)
         page += 1
@@ -203,7 +203,7 @@ def vdmeulen(s,x,y):
                 # #link to page
                 pagina = huis.find('a', href=True)['href']
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
                     results.append(result)
         page += 1
     print("Einde van der Meulen makelaars\n")
@@ -238,7 +238,7 @@ def eentweedriewonen(s,x,y):
                 pagina = huis['onclick'][15:-2]
                 #print(status,opper,prijs,pagina)
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
                     results.append(result)
         page += 1
     print("Einde 123 wonen\n")
@@ -268,10 +268,10 @@ def wbnn(s,x,y,z):
                 site = huis.find("td", {"data-title": "Details"})
                 pagina = site.find("a")['href']
                 if status == s and int(opper) >= x and int(prijs) <= y and inc == "excl.":
-                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
+                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
                     results.append(result)
                 if status == s and int(opper) >= x and int(prijs) <= z and inc == "incl.":
-                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
+                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
                     results.append(result)
         page += 1
     print("Einde Woonbemiddeling Noord-Nederland\n")
@@ -303,10 +303,10 @@ def rotsvast(s,x,y,z):
                 #link to page
                 pagina = huis.find("a")['href']
                 if status == s and int(opper) >= x and float(prijs) <= y and inc == "excl.":
-                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina)
+                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina)
                     results.append(result)
                 if status == s and int(opper) >= x and float(prijs) <= z and inc == "incl.":
-                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina)
+                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina)
                     results.append(result)
     print("Einde rotsvast vastgoed\n")
     return results
@@ -344,7 +344,7 @@ def rec(s,x,y):
                         opper = item.text.strip()[:-2]
                     c += 1
                 if status == s and int(opper) >= x and float(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,site)
+                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,site)
                     results.append(result)
         page += 1
     print("Einde Real estate consultancy(REC)\n")
@@ -387,7 +387,7 @@ def vesteda():
                 # pagina = huis.find('a', href=True, attrs={'class': None})
                 # pagina = "https://www.pandomo.nl"+pagina['href']
                 # if status == s and int(opper) >= x and int(prijs) <= y:
-                #     result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                #     result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
                 #     results.append(result)
                 #print(status,opper,prijs,pagina)
         page += 1
