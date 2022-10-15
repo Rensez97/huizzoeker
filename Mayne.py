@@ -302,7 +302,6 @@ def rotsvast(s,x,y,z):
                     status = "Nieuw"
                 #link to page
                 pagina = huis.find("a")['href']
-                print(status,opper,prijs,inc)
                 if status == s and int(opper) >= x and float(prijs) <= y and inc == "excl.":
                     result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina)
                     results.append(result)
