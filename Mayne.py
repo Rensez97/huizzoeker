@@ -278,36 +278,154 @@ def wbnn(s,x,y,z):
     return results
 
 
-def jaap():
-    print("jaap checken...")
-    page = 1
+def rotsvast(s,x,y,z):
+    print("Rotsvast vastgoed checken...")
     results = []
-    for i in range(10):
-        url = "https://www.jaap.nl/huurhuizen/groningen/overig+groningen/groningen/p"+str(page)
+    for i in range(1):
+        url = "https://www.rotsvast.nl/woningaanbod/?type=2&city=Groningen&office=0&count=30"
         req = requests.get(url)
         soup = BeautifulSoup(req.text,'html.parser')
-        huizen = soup.find("div", {"class": re.compile("house_result_")})
+        huizen = soup.find_all("div", {"class": "residence-gallery clickable-parent col-md-4"})
         if huizen:
             for huis in huizen:
-                print(huis)
-        page += 1
-    print("Einde jaap\n")
+                #finding square feet
+                properties = huis.find("div", {"class": "residence-properties"}).text.split()
+                index = properties.index("Woonoppervlakte")
+                opper = properties[index+1]
+                #finding costs of house
+                totaal = huis.find("div", {"class": "residence-price"}).text.split()
+                prijs = totaal[1].replace(".","").replace(",",".")
+                inc = totaal[-1]
+                #finding active status
+                status = huis.find("div", {"class": re.compile("status")}).text
+                if status == "Topper":
+                    status = "Nieuw"
+                #link to page
+                pagina = huis.find("a")['href']
+                print(status,opper,prijs,inc)
+                if status == s and int(opper) >= x and float(prijs) <= y and inc == "excl.":
+                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina)
+                    results.append(result)
+                if status == s and int(opper) >= x and float(prijs) <= z and inc == "incl.":
+                    result = "Huis gevonden met {} m2 voor €{} {}!  {}".format(opper,prijs,inc,pagina)
+                    results.append(result)
+    print("Einde rotsvast vastgoed\n")
     return results
 
 
-def pararius(s,x,y,z):
-    print("Pararius checken...")
+def rec(s,x,y):
+    print("Real estate consultancy(REC) checken...")
     page = 1
-    for i in range(10):
-        url = "https://www.pararius.nl/huurwoningen/groningen/page-"+str(page)
+    results = []
+    for i in range(1):
+        #only one page
+        url = "https://recvastgoed.nl/huurwoningen/"
         req = requests.get(url)
         soup = BeautifulSoup(req.text,'html.parser')
-        search = soup.find("ul", {"class": "search-list"})
+        huizen = soup.find_all("div", {"class": "col-md-4 col-sm-6 huurwoning"})
+        if huizen:
+            for huis in huizen:
+                #finding costs of house
+                prijs = huis.find("span", {"class": "prijs"}).text[2:].replace(".","").replace(",",".")
+                # #finding active status
+                if huis.find("div", {"class": "woning-label"}):
+                    status = huis.find("div", {"class": "woning-label"}).text
+                else:
+                    status = "Beschikbaar"
+                #link to page
+                site = huis.find("a")['href']
+                #opening link to find square feet
+                req2 = requests.get(site)
+                huissoup = BeautifulSoup(req2.text,'html.parser')
+                specs = huissoup.find("div", {"class": "detail-list"})
+                specslist = specs.find("ul")
+                c = 0
+                for item in specslist:
+                    if c == 5:
+                        opper = item.text.strip()[:-2]
+                    c += 1
+                if status == s and int(opper) >= x and float(prijs) <= y:
+                    result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,site)
+                    results.append(result)
+        page += 1
+    print("Einde Real estate consultancy(REC)\n")
+    return results
+
+
+
+
+def vesteda():
+    print("Vesteda checken...")
+    page = 1
+    results = []
+    for i in range(10):
+        url = "https://www.vesteda.com/nl/woning-zoeken?s=Groningen&sc=woning&priceFrom=500&priceTo=9999&bedRooms=0&unitTypes=2&unitTypes=1&unitTypes=4&radius=20&placeType=1&lng=6.56650161743164&lat=53.2193832397461&sortType=0"
+        req = requests.get(url)
+        soup = BeautifulSoup(req.text,'html.parser')
         print(soup)
+        search = soup.find("ul", {"class": "o-layout o-layout--gutter-base o-layout--equalheight u-margin-bottom-none o-layout--auto-column-300"})
+        print(search)
         if search:
-            huizen = search.find_all("li",{"class": "search-list__item search-list__item--listing"},recursive=False)
+            huizen = search.find_all("li")
             for huis in huizen:
                 print(huis)
+                #finding square feet
+                # if huis.find("span", {"class": "info__item"}):
+                #     opper = huis.find("span", {"class": "info__item"}).text.split()[0]
+                # else:
+                #     opper = 0
+                # #finding costs of house
+                # if len(huis.find("strong").text.split()) == 3:
+                #     prijs = huis.find("strong").text[2:-7].replace(".","")
+                # else:
+                #     prijs = huis.find("strong").text.split()[2][:-3].replace(".","")
+                # #finding active status
+                # if huis.find("span", {"class": re.compile("results__item__image__label")}):
+                #     status = huis.find("span", {"class": re.compile("results__item__image__label")}).text
+                # else:
+                #     status = huis.find("div", {"class": re.compile("results__item__image__label")}).text
+                # #link to page
+                # pagina = huis.find('a', href=True, attrs={'class': None})
+                # pagina = "https://www.pandomo.nl"+pagina['href']
+                # if status == s and int(opper) >= x and int(prijs) <= y:
+                #     result = "Huis gevonden met {} m2 voor €{}!  {}".format(opper,prijs,pagina)
+                #     results.append(result)
+                #print(status,opper,prijs,pagina)
+        page += 1
+    print("Einde vesteda\n")
+    return results
+
+
+# def jaap():
+#     print("jaap checken...")
+#     page = 1
+#     results = []
+#     for i in range(10):
+#         url = "https://www.jaap.nl/huurhuizen/groningen/overig+groningen/groningen/p"+str(page)
+#         req = requests.get(url)
+#         soup = BeautifulSoup(req.text,'html.parser')
+#         huizen = soup.find("div", {"class": re.compile("house_result_")})
+#         if huizen:
+#             for huis in huizen:
+#                 print(huis)
+#         page += 1
+#     print("Einde jaap\n")
+#     return results
+
+
+# def pararius(s,x,y,z):
+#     print("Pararius checken...")
+#     page = 1
+#     for i in range(10):
+#         url = "https://www.pararius.nl/huurwoningen/groningen/page-"+str(page)
+#         req = requests.get(url)
+#         soup = BeautifulSoup(req.text,'html.parser')
+#         search = soup.find("ul", {"class": "search-list"})
+#         print(soup)
+#         if search:
+#             huizen = search.find_all("li",{"class": "search-list__item search-list__item--listing"},recursive=False)
+#             for huis in huizen:
+#                 print(huis)
             # alert = 0
             # #finding squared m2
             # labels = huis.find_all("span", {"class": "figure"})
@@ -324,18 +442,21 @@ def pararius(s,x,y,z):
             #     print(opper,prijs,inc+"HUIS!!!")
             # if status[0].text == s and int(opper) >= x and int(prijs) <= z and inc == "inclusief":
             #     print(opper,prijs,inc+"HUIS!!!")
-        page += 1
-    print("Einde pararius\n")
+    #     page += 1
+    # print("Einde pararius\n")
 
 
-def gruno(s,x,y,z):
-    print("Gruno checken...")
-    page = 1
-    for i in range(10):
-        url = "https://www.grunoverhuur.nl/huuraanbod/page/"+str(page)+"/?search_property&lang=nl&property_type&property_area&property_bedrooms&property_city=Groningen&price_min=300%2C00&price_max=900%2C00"
-        req = requests.get(url)
-        soup = BeautifulSoup(req.text,'html.parser')
-        huizen = soup.find_all("div", {"class": "rh_list_card__wrap"})
+# def gruno():
+#     print("Gruno checken...")
+#     page = 1
+#     for i in range(10):
+#         url = "https://www.grunoverhuur.nl/huuraanbod/page/"+str(page)+"/?search_property&lang=nl&property_type&property_area&property_bedrooms&property_city=Groningen&price_min=300%2C00&price_max=900%2C00"
+#         req = requests.get(url)
+#         soup = BeautifulSoup(req.text,'html.parser')
+#         huizen = soup.find_all("div", {"class": "property-style-6"})
+#         if huizen:
+#             for huis in huizen:
+#                 print(huis)
 
 
 def email(results,alert):
@@ -348,7 +469,7 @@ def email(results,alert):
     if alert == 1:
         message['SUBJECT'] = "1 nieuwe osso gevonden"
     if alert > 1:
-        message['SUBJECT'] = str(alert)+" nieuwe ossauws gevonden"
+        message['SUBJECT'] = str(alert)+" nieuwe ossos gevonden"
     context = ssl.create_default_context()
     #set up SMTP server
     with smtplib.SMTP('smtp-mail.outlook.com',587) as smtp:
@@ -388,14 +509,24 @@ def main():
     eentweedriewonen_results = eentweedriewonen("Beschikbaar",x,y)
 
     #input = Nieuw/Verhuurd/(Optie?)
-    wbnn_results = wbnn("Verhuurd",x,y,z)
+    wbnn_results = wbnn("Nieuw",x,y,z)
+
+    # status = Nieuw/Topper/Bezichtiging/Verhuurd/Verhuurd (onder voorbehoud)
+    rotsvast_results = rotsvast("Nieuw",x,y,z)
+
+    #input = Beschikbaar/Verhuurd/Verhuurd onder voorbehoud
+    rec_results = rec("Beschikbaar",x,y)
+
+    #vesteda()
+
+    #gruno()
 
     #pararius("Nieuw in verhuur",35,750,850)
 
     #jaap()
 
     #all_results = eentweedriewonen_results
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results + rotsvast_results + rec_results
     for item in all_results:
         print(item)
 
