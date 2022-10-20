@@ -124,18 +124,20 @@ def mvgm(s,x,y):
         if search:
             huizen = search.find_all("li",recursive=False)
             for huis in huizen:
-                #finding square feet
-                opper = huis.find("li", {"class": "oppervlakte"}).text[11:].split()[0]
-                #finding costs of house
-                prijs = huis.find("span", {"class": "page-price"}).text[1:].replace(".","")
-                #finding active status
-                status = huis.find("span", {"class": re.compile("status-sticker")}).text
-                #link to page
-                pagina = huis.find('a', href=True)
-                if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina['href'])
-                    results.append(result)
-                #print(status,opper,prijs,pagina['href'])
+                try:
+                    #finding square feet
+                    opper = huis.find("li", {"class": "oppervlakte"}).text[11:].split()[0]
+                    #finding costs of house
+                    prijs = huis.find("span", {"class": "page-price"}).text[1:].replace(".","")
+                    #finding active status
+                    status = huis.find("span", {"class": re.compile("status-sticker")}).text
+                    #link to page
+                    pagina = huis.find('a', href=True)
+                    if status == s and int(opper) >= x and int(prijs) <= y:
+                        result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina['href'])
+                        results.append(result)
+                except AttributeError:
+                    print("Oeps, iets is misgegaan")
         page += 1
     print("Einde MVGM\n")
     return results
@@ -541,9 +543,8 @@ def main():
                 f.write(item+"\n")
         f.close()
         if alert > 0:
-            print("Email is onderweg!")
             email(all_results,alert)
-
+            print("Email is onderweg!")
 
 if __name__ == "__main__":
     main()
