@@ -6,6 +6,7 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 import datetime
+import pickle
 
 
 def nova(s,x,y,z):
@@ -30,12 +31,12 @@ def nova(s,x,y,z):
             #finding status of house
             status = huis.find_all("span", {"class": "property-label"})
             #link to page
-            pagina = huis.find('a', href=True)
+            pagina = huis.find('a', href=True)['href']
             if status[0].text == s and int(opper) >= x and int(prijs) <= y and inc == "exclusief":
-                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina['href'])
+                result = [opper,prijs,inc,pagina]
                 results.append(result)
             if status[0].text == s and int(opper) >= x and int(prijs) <= z and inc == "inclusief":
-                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina['href'])
+                result = [opper,prijs,inc,pagina]
                 results.append(result)
         page += 1
     print("Einde nova vastgoed\n")
@@ -69,12 +70,13 @@ def nulvijf(s,x,y,z):
                 inc = "excl"
             #finding status of house
             status = huis.find("div", {"class": "object_status_container"})
-            pagina = huis.find('a', href=True)
+            url = huis.find('a', href=True)['href']
+            pagina = "https://050vastgoed.nl"+url
             if status.text.strip() == s and float(opper) >= x and float(prijs) <= y and inc == "excl":
-                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://050vastgoed.nl"+pagina['href'])
+                result = [opper,prijs,inc,pagina]
                 results.append(result)
             if status.text.strip() == s and float(opper) >= x and float(prijs) <= z and inc == "inc":
-                result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://050vastgoed.nl"+pagina['href'])
+                result = [opper,prijs,inc,pagina]
                 results.append(result)
         page += 10
     print("Einde 050\n")
@@ -101,12 +103,12 @@ def solide(x,y):
                 #finding active status
                 status = huis.find("span", {"class": re.compile("status-sticker")}).text
                 #link to page
-                pagina = huis.find('a', href=True)
+                pagina = huis.find('a', href=True)['href']
                 if prijs.isnumeric():
                     if int(float(opper)) >= x and int(prijs) <= y:
-                        result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina['href'])
+                        result = [opper,prijs,"exlc",pagina]
                         results.append(result)
-                #print(status,opper,prijs,pagina['href'])
+                #print(status,opper,prijs,pagina)
             page += 1
     print("Einde solide vastgoed\n")
     return results
@@ -132,9 +134,9 @@ def mvgm(s,x,y):
                     #finding active status
                     status = huis.find("span", {"class": re.compile("status-sticker")}).text
                     #link to page
-                    pagina = huis.find('a', href=True)
+                    pagina = huis.find('a', href=True)['href']
                     if status == s and int(opper) >= x and int(prijs) <= y:
-                        result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina['href'])
+                        result = [opper,prijs,"excl",pagina]
                         results.append(result)
                 except AttributeError:
                     print("Oeps, iets is misgegaan")
@@ -171,10 +173,10 @@ def pandomo(s,x,y):
                 else:
                     status = huis.find("div", {"class": re.compile("results__item__image__label")}).text
                 #link to page
-                pagina = huis.find('a', href=True, attrs={'class': None})
-                pagina = "https://www.pandomo.nl"+pagina['href']
+                pagina = huis.find('a', href=True, attrs={'class': None})['href']
+                pagina = "https://www.pandomo.nl"+pagina
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
+                    result = [opper,prijs,"excl",pagina]
                     results.append(result)
                 #print(status,opper,prijs,pagina)
         page += 1
@@ -205,7 +207,7 @@ def vdmeulen(s,x,y):
                 # #link to page
                 pagina = huis.find('a', href=True)['href']
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
+                    result = [opper,prijs,"?",pagina]
                     results.append(result)
         page += 1
     print("Einde van der Meulen makelaars\n")
@@ -240,7 +242,7 @@ def eentweedriewonen(s,x,y):
                 pagina = huis['onclick'][15:-2]
                 #print(status,opper,prijs,pagina)
                 if status == s and int(opper) >= x and int(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
+                    result = [opper,prijs,"?",pagina]
                     results.append(result)
         page += 1
     print("Einde 123 wonen\n")
@@ -269,11 +271,12 @@ def wbnn(s,x,y,z):
                 #link to page
                 site = huis.find("td", {"data-title": "Details"})
                 pagina = site.find("a")['href']
+                pagina = "https://wbnn.nl/"+pagina
                 if status == s and int(opper) >= x and int(prijs) <= y and inc == "excl.":
-                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
+                    result = [opper,prijs,inc,pagina]
                     results.append(result)
                 if status == s and int(opper) >= x and int(prijs) <= z and inc == "incl.":
-                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,"https://wbnn.nl/"+pagina)
+                    result = [opper,prijs,inc,pagina]
                     results.append(result)
         page += 1
     print("Einde Woonbemiddeling Noord-Nederland\n")
@@ -305,10 +308,10 @@ def rotsvast(s,x,y,z):
                 #link to page
                 pagina = huis.find("a")['href']
                 if status == s and int(opper) >= x and float(prijs) <= y and inc == "excl.":
-                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina)
+                    result = [opper,prijs,inc,pagina]
                     results.append(result)
                 if status == s and int(opper) >= x and float(prijs) <= z and inc == "incl.":
-                    result = "Huis gevonden met {} m2 voor {} {}!  {}".format(opper,prijs,inc,pagina)
+                    result = [opper,prijs,inc,pagina]
                     results.append(result)
     print("Einde rotsvast vastgoed\n")
     return results
@@ -334,9 +337,9 @@ def rec(s,x,y):
                 else:
                     status = "Beschikbaar"
                 #link to page
-                site = huis.find("a")['href']
+                pagina = huis.find("a")['href']
                 #opening link to find square feet
-                req2 = requests.get(site)
+                req2 = requests.get(pagina)
                 huissoup = BeautifulSoup(req2.text,'html.parser')
                 specs = huissoup.find("div", {"class": "detail-list"})
                 specslist = specs.find("ul")
@@ -346,7 +349,7 @@ def rec(s,x,y):
                         opper = item.text.strip()[:-2]
                     c += 1
                 if status == s and int(opper) >= x and float(prijs) <= y:
-                    result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,site)
+                    result = [opper,prijs,"?",pagina]
                     results.append(result)
         page += 1
     print("Einde Real estate consultancy(REC)\n")
@@ -355,21 +358,21 @@ def rec(s,x,y):
 
 
 
-def vesteda():
-    print("Vesteda checken...")
-    page = 1
-    results = []
-    for i in range(10):
-        url = "https://www.vesteda.com/nl/woning-zoeken?s=Groningen&sc=woning&priceFrom=500&priceTo=9999&bedRooms=0&unitTypes=2&unitTypes=1&unitTypes=4&radius=20&placeType=1&lng=6.56650161743164&lat=53.2193832397461&sortType=0"
-        req = requests.get(url)
-        soup = BeautifulSoup(req.text,'html.parser')
-        print(soup)
-        search = soup.find("ul", {"class": "o-layout o-layout--gutter-base o-layout--equalheight u-margin-bottom-none o-layout--auto-column-300"})
-        print(search)
-        if search:
-            huizen = search.find_all("li")
-            for huis in huizen:
-                print(huis)
+# def vesteda():
+#     print("Vesteda checken...")
+#     page = 1
+#     results = []
+#     for i in range(10):
+#         url = "https://www.vesteda.com/nl/woning-zoeken?s=Groningen&sc=woning&priceFrom=500&priceTo=9999&bedRooms=0&unitTypes=2&unitTypes=1&unitTypes=4&radius=20&placeType=1&lng=6.56650161743164&lat=53.2193832397461&sortType=0"
+#         req = requests.get(url)
+#         soup = BeautifulSoup(req.text,'html.parser')
+#         print(soup)
+#         search = soup.find("ul", {"class": "o-layout o-layout--gutter-base o-layout--equalheight u-margin-bottom-none o-layout--auto-column-300"})
+#         print(search)
+#         if search:
+#             huizen = search.find_all("li")
+#             for huis in huizen:
+#                 print(huis)
                 #finding square feet
                 # if huis.find("span", {"class": "info__item"}):
                 #     opper = huis.find("span", {"class": "info__item"}).text.split()[0]
@@ -392,9 +395,9 @@ def vesteda():
                 #     result = "Huis gevonden met {} m2 voor {}!  {}".format(opper,prijs,pagina)
                 #     results.append(result)
                 #print(status,opper,prijs,pagina)
-        page += 1
-    print("Einde vesteda\n")
-    return results
+    #     page += 1
+    # print("Einde vesteda\n")
+    # return results
 
 
 # def jaap():
@@ -463,8 +466,7 @@ def vesteda():
 def email(results,alert):
     #print(products, new_products, updated_products)
     message = EmailMessage()
-    text = "\n".join(results)
-    message.set_content(text)
+    message.set_content(results)
     message['FROM'] = "huizzoeker@outlook.com"
     message['TO'] = ["rensevdzee@hotmail.com"]
     if alert == 1:
@@ -480,6 +482,38 @@ def email(results,alert):
         smtp.quit()
 
 
+#function to compare new results to active list of houses and update where needed
+def update(oldlist,newlist):
+    cnew = 0
+    cdel = 0
+    for new in newlist:
+        new.insert(0,"()")
+        #update new status into old if already present
+        for old in oldlist:
+            if new[1:] == old[1:] and old[0] == "(Nieuw)":
+                old[0] = "()"
+        #append to list if item is new and mark as new
+        if new not in oldlist:
+            cnew += 1
+            new[0] = "(Nieuw)"
+            oldlist.append(new)
+    #delete item if not anymore online
+    for old in oldlist:
+        if old not in newlist:
+            cdel += 1
+            oldlist.remove(old)
+    return oldlist, cnew
+
+
+#write the message for the email
+def writemsg(uptodate):
+    str_list = []
+    for item in uptodate:
+        if item[0] == "(Nieuw)":
+            str_list.append("{}Potentieel huis gevonden met {} m2 voor {} {}!  {}".format(item[0],item[1],item[2],item[3],item[4]))
+        else:
+            str_list.append("Potentieel huis gevonden met {} m2 voor {} {}!  {}".format(item[1],item[2],item[3],item[4]))
+    return "\n".join(str_list)
 
 def main():
     x = 35
@@ -526,25 +560,28 @@ def main():
 
     #jaap()
 
-    #all_results = eentweedriewonen_results
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results + rotsvast_results + rec_results
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results + rotsvast_results# + rec_results
     for item in all_results:
         print(item)
 
+
+#     oldlist = [['()','48', '90.', 'excl', 'https://050vastgoed.nl/woningaanbod/huur/groningen/galenuslaan/24-44?forsaleorrent=1&localityid=23523&locationofinterest=Groningen&moveunavailablelistingstothebottom=true&orderby=8&take=10'],
+# ['()','41', '620', 'exlc', 'https://solideverhuur.nl/huurwoningen/groningen/4-eendrachtskade-9726cw/'],
+# ['(Nieuw)','62', '700', 'excl', 'https://ikwilhuren.nu/huurwoningen/groningen/55-kajuit-90-t-m-208-en-lijzijde-7-t-m-19/kajuit-141'],['(Nieuw)','3', '333', 'excl', 'https://ikwilhuren.nu/huurwoningen/groningen/55-kajuit-90-t-m-208-en-lijzijde-7-t-m-19/kajuit-141']]
+#     newlist = [['48', '90.', 'excl', 'https://050vastgoed.nl/woningaanbod/huur/groningen/galenuslaan/24-44?forsaleorrent=1&localityid=23523&locationofinterest=Groningen&moveunavailablelistingstothebottom=true&orderby=8&take=10'],
+# ['41', '620', 'exlc', 'https://solideverhuur.nl/huurwoningen/groningen/4-eendrachtskade-9726cw/'],
+# ['62', '700', 'excl', 'https://ikwilhuren.nu/huurwoningen/groningen/55-kajuit-90-t-m-208-en-lijzijde-7-t-m-19/kajuit-141'],['81', '850', '?', 'https://www.123wonen.nl/huur/groningen/eengezinswoning/grevingaheerd-4459-2']]
+
     if all_results:
-        alert = 0
-        with open("actief.txt","r+") as f:
-            actief = f.readlines()
-            f.truncate(0)
-            f.seek(0)
-            for item in all_results:
-                if item+"\n" not in actief:
-                    alert += 1
-                f.write(item+"\n")
-        f.close()
-        if alert > 0:
-            email(all_results,alert)
+        with open("/home/huizzoeker/current.pkl", "rb") as f:
+            #pickle.dump(oldlist,f)
+            current = pickle.load(f)
+            uptodate,cnew = update(current,all_results)
+        if cnew > 0:
+            text = writemsg(uptodate)
+            email(text,cnew)
             print("Email is onderweg!")
+
 
 if __name__ == "__main__":
     main()
