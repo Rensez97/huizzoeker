@@ -574,14 +574,14 @@ def main():
 
     if all_results:
         with open("/home/huizzoeker/current.pkl", "rb") as f:
-            #pickle.dump(oldlist,f)
             current = pickle.load(f)
             uptodate,cnew = update(current,all_results)
         if cnew > 0:
             text = writemsg(uptodate)
             email(text,cnew)
             print("Email is onderweg!")
-
+        with open("current.pkl",'wb') as f2:
+            pickle.dump(uptodate,f2)
 
 if __name__ == "__main__":
     main()
