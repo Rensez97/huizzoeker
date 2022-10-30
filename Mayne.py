@@ -560,7 +560,7 @@ def main():
 
     #jaap()
 
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results + rotsvast_results# + rec_results
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results + wbnn_results + rotsvast_results + rec_results
     for item in all_results:
         print(item)
 
