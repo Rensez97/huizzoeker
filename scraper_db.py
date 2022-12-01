@@ -56,7 +56,7 @@ def nova():
                 adres = huissoup.find("p", {"class": "rh_page__property_address"}).text.strip().split(",")[:2] #[nummer/straat,straat/buurt]
 
                 #finding details on m2 and number of rooms
-                details = huis.find('div', {"class": "rh_property__row rh_property__meta_wrap"})
+                #details = huis.find('div', {"class": "rh_property__row rh_property__meta_wrap"})
                 labels = huis.find_all("span", {"class": "figure"})
                 opper = eval(labels[-1].text.strip())
 
@@ -162,8 +162,8 @@ def solide():
                     typewoning = "?"
 
                     # finding square feet
-                    specs = huis.find(
-                        "ul", {"class": "search-result-specs fa-ul"})
+                    #specs = huis.find(
+                    #    "ul", {"class": "search-result-specs fa-ul"})
                     opper = huis.find("li").text.split()[0]
                     specslist = huis.find_all("li")
                     c = 0
@@ -355,7 +355,7 @@ def vdmeulen():
                         inc = "inclusief"
                     if "exclusief" in content:
                         inc = "exclusief"
-                    results.append([vdmeulen.__name__,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append([vdmeulen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
                 except Exception as e:
                     email_error(vdmeulen.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -496,8 +496,8 @@ def rotsvast():
                         typewoning = element.find_next('div').text.strip()
 
                     # finding square feet
-                    properties = huis.find(
-                        "div", {"class": "residence-properties"}).text.split()
+                    # properties = huis.find(
+                    #     "div", {"class": "residence-properties"}).text.split()
                     for element in huissoup.find_all('div', text="Oppervlakte (ca.)"):
                         opper = element.find_next('div').text.strip().split()[0]
                     for element in huissoup.find_all('div', text="Aantal slaapkamers"):
@@ -609,7 +609,6 @@ def gruno():
                 results.append([opper, prijs, "?", pagina])
             page += 1
     print("Einde Gruno\n")
-    print(results)
     return results
 
 
