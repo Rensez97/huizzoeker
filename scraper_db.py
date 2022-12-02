@@ -324,8 +324,8 @@ def vdmeulen():
                             "span", {"class": "status"}).text.strip()
                     else:
                         status = "Beschikbaar"
-                    if status != "Beschikbaar":
-                        continue
+                    # if status != "Beschikbaar":
+                    #     continue
 
                     #finding adres
                     adres = huis.find("h3", {"class": "entry-title"}).text
@@ -335,8 +335,8 @@ def vdmeulen():
                     opper = specs[0].text[:-2]
                     kamers = specs[1].text
                     # finding costs of house
-                    prijs = huis.find(
-                        "span", {"class": "price"}).text[1:-2].replace(".", "")
+                    # prijs = huis.find(
+                    #     "span", {"class": "price"}).text[1:-2].replace(".", "")
 
                     #going to detailed page of house
                     pagina = huis.find('a', href=True)['href']
@@ -350,12 +350,14 @@ def vdmeulen():
                     if "woning" in content:
                         typewoning = "Woning"
 
+
+                    totaal = huissoup.find("span", {"class": "single-property-price price"}).text
                     #search for inclusive or exclusief
                     if "inclusief" in content:
                         inc = "inclusief"
                     if "exclusief" in content:
                         inc = "exclusief"
-                    results.append([vdmeulen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    # results.append([vdmeulen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
                 except Exception as e:
                     email_error(vdmeulen.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -574,43 +576,252 @@ def rec():
     return results
 
 
-#[makelaar,adres,typewoning,opper,kamers,prijs,inc,status,pagina]
+# status = Beschikbaar(if none)/Uitgelicht/Onder Voorbehoud/Verhuurd
 def gruno():
     print("Gruno checken...")
     page = 1
     results = []
     for i in range(10):
-        req = requests.get("https://www.grunoverhuur.nl/huuraanbod/page/" +
-                           str(page)+"/?search_property&lang=nl&property_type&property_area&property_bedrooms&property_city=Groningen&price_min=300%2C00&price_max=900%2C00")
+        req = requests.get("https://www.grunoverhuur.nl/huuraanbod/page/"+str(page)+"/?search_property&lang=nl&property_type&property_area&property_bedrooms&property_city=Groningen&price_min=300%2C00&price_max=3000%2C00")
         soup = BeautifulSoup(req.text, 'html.parser')
         search = soup.find_all("div", {"class": "gdlr-core-pbf-element"})
         if search:
             huizen = search[4].find_all("div", {"id": re.compile("property")})
             for huis in huizen:
-                totaal = huis.find("span", {"class": "price"}).text.strip()
-                inc = totaal[-6:-1]
-                prijs_list = [char for char in totaal if char.isdigit()][:-2]
-                prijs = "".join(prijs_list)
-                opper = huis.find(
-                    "span", {"title": "Oppervlakte"}).text.strip()[:-2]
-                pagina = huis.find("a")['href']
-                kamers = huis.find(
-                    "span", {"title": "Slaapkamers"})
-                if kamers is None:
-                    kamers = 1
-                else:
-                    kamers = kamers.text.strip()
-                status = huis.find("div", {"class": re.compile(
-                    "rem-sale rem-sale-top-left")})
-                if status is None:
-                    status = "Beschikbaar"
-                else:
-                    status = status.text.strip()
-                results.append([opper, prijs, "?", pagina])
+                try:
+                    #searching for status on home page for availability and skip iteration if unavailable
+                    status = huis.find("div", {"class": re.compile(
+                        "rem-sale rem-sale-top-left")})
+                    if status is None:
+                        status = "Beschikbaar"
+                    else:
+                        status = status.text.strip()
+                    if status == "Uitgelicht":
+                        status = "Beschikbaar"
+                    if status != "Beschikbaar":
+                        continue
+                    totaal = huis.find("span", {"class": "price"}).text.strip()
+                    inc = totaal[-6:-1]
+                    prijs_list = [char for char in totaal if char.isdigit()][:-2]
+                    prijs = "".join(prijs_list)
+                    opper = huis.find(
+                        "span", {"title": "Oppervlakte"}).text.strip()[:-2]
+
+                    pagina = huis.find("a")['href']
+                    req2 = requests.get(pagina)
+                    huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    adres = huissoup.find("div", {"class": "col-sm-4 col-xs-12 wrap_property_address"}).text.split(":")[1].strip()
+                    typewoning = huissoup.find("div", {"class": "col-sm-4 col-xs-12 wrap_property_type"}).text.split(":")[1].strip()
+                    kamers = huis.find(
+                        "span", {"title": "Slaapkamers"})
+                    if kamers is None:
+                        kamers = 1
+                    else:
+                        kamers = kamers.text.strip()
+                    results.append([gruno.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                except Exception as e:
+                    email_error(gruno.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
             page += 1
     print("Einde Gruno\n")
     return results
 
+
+# status = Beschikbaar/Onder optie/Verhuurd
+def f1_riant():
+    print("F1 riant makelaars checken...")
+    results = []
+    for i in range(1):
+        req = requests.get("https://www.frmakelaars.nl/aanbod/huuraanbod/")
+        soup = BeautifulSoup(req.text, 'html.parser')
+        huizen = soup.find_all(
+            "div", {"class": "col-xs-6 col-xs-switch m-b-60 matchheight matchheight-xs col-md-3"})
+        if huizen:
+            for huis in huizen:
+                try:
+                    #searching for status on home page for availability and skip iteration if unavailable
+                    status = huis.find("label", {"class": "label"}).text.strip()
+                    if status != "Beschikbaar":
+                        continue
+
+                    # link to page
+                    link = huis.find("a")['href']
+                    pagina = "https://www.frmakelaars.nl"+link
+                    req2 = requests.get(pagina)
+                    huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    adres = huissoup.find("h1", {"class": "page-title"}).text.split(",")[0]
+
+                    specs = huissoup.find("div", {"class": "spec-box"})
+                    for element in specs.find_all('th', text=re.compile("Type Object")):
+                        typewoning = element.find_next('td').text
+                    
+                    # find square feet
+                    for element in specs.find_all('th', text=re.compile("Woonoppervlakte")):
+                        opper = element.find_next('td').text.split()[0]
+
+                    # find number of rooms
+                    for element in specs.find_all('th', text=re.compile("Kamers")):
+                        kamers = element.find_next('td').text.split()[1][1:]
+
+                    # find number of rooms
+                    for element in specs.find_all('th', text=re.compile("Prijs")):
+                        prijs = element.find_next('td').text.split()[1].split(",")[0].replace(".","")
+                    inc = "exclusief"
+                    results.append([f1_riant.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                except Exception as e:
+                    email_error(f1_riant.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
+    print("Einde F1 riant makelaars\n")
+    return results
+
+
+
+# status = Beschikbaar/Optie/Verhuurd
+def maxx():
+    print("Maxx makelaars/vastgoed checken...")
+    results = []
+    for i in range(1):
+        req = requests.get("https://maxxhuren.nl/objects/objects/search/city-groningen/min-0/max-2500/")
+        soup = BeautifulSoup(req.text, 'html.parser')
+        huizen = soup.find_all(
+            "div", {"class": "col-12 col-md-6 col-xl-4"})
+        if huizen:
+            for huis in huizen:
+                try:
+                    #searching for status on home page for availability and skip iteration if unavailable
+                    if huis.find("div", {"class": "object-image"}).text.strip() == "":
+                        status = "Beschikbaar"
+                    else:
+                        status = huis.find("div", {"class": "object-image"}).text.strip()
+                    if status != "Beschikbaar":
+                        continue
+
+                    adres = huis.find("h5", {"class": "object-title"}).text.split("Groninge")[0]
+                    typewoning = huis.find("div", {"class": "object-type"}).text.strip()
+                    
+                    opper = huis.find("div", {"class": "col text-left"}).text.split()[0]
+                    # kamers = huis.find("div", {"class": "col text-right"}).text.split()[0]
+
+                    # # link to page
+                    link = huis.find("a")['href']
+                    pagina = "https://maxxhuren.nl"+link
+                    req2 = requests.get(pagina)
+                    huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    specs = huissoup.find("div", {"class": "col-4 col-md-3 p-3 info-left"}).text
+                    kamers_index = specs.find("slaapkamer")
+                    kamers = specs[kamers_index-2]
+
+                    totaal = huissoup.find("h3", {"class": "text-red price"}).text.split()
+                    prijs = totaal[1].split(",")[0].replace(".","")
+                    inc = totaal[3]
+
+                    results.append([maxx.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                except Exception as e:
+                    email_error(maxx.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
+    print("Einde Maxx makelaars/vastgoed\n")
+    return results  
+
+
+
+#status = Nieuw/Verhuurd
+def zeeven():
+    print("Zeeven makelaars checken...")
+    results = []
+    for i in range(1):
+        req = requests.get("https://www.zeeven.nl/aanbod/woningaanbod/GRONINGEN/huur/aantal-80/")
+        soup = BeautifulSoup(req.text, 'html.parser')
+        search = soup.find("ul")
+        huizen = search.find("a", {"class": re.compile("al2woning aanbodEntry odd")})
+        print(huizen)
+        if huizen:
+            for huis in huizen:
+                try:
+                    print(huis)
+                    status = huis.find("span", {"class": re.compile("objectstatusbanner")})
+                    print(status)
+                    # #searching for status on home page for availability and skip iteration if unavailable
+                    # if huis.find("div", {"class": "object-image"}).text.strip() == "":
+                    #     status = "Beschikbaar"
+                    # else:
+                    #     status = huis.find("div", {"class": "object-image"}).text.strip()
+                    # if status != "Beschikbaar":
+                    #     continue
+
+                    # adres = huis.find("h5", {"class": "object-title"}).text.split("Groninge")[0]
+                    # typewoning = huis.find("div", {"class": "object-type"}).text.strip()
+                    
+                    # opper = huis.find("div", {"class": "col text-left"}).text.split()[0]
+                    # # kamers = huis.find("div", {"class": "col text-right"}).text.split()[0]
+
+                    # # # link to page
+                    # link = huis.find("a")['href']
+                    # pagina = "https://maxxhuren.nl"+link
+                    # req2 = requests.get(pagina)
+                    # huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    # specs = huissoup.find("div", {"class": "col-4 col-md-3 p-3 info-left"}).text
+                    # kamers_index = specs.find("slaapkamer")
+                    # kamers = specs[kamers_index-2]
+
+                    # totaal = huissoup.find("h3", {"class": "text-red price"}).text.split()
+                    # prijs = totaal[1].split(",")[0].replace(".","")
+                    # inc = totaal[3]
+
+                    # results.append([zeeven.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                except Exception as e:
+                    #email_error(zeeven.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
+    print("Einde Zeeven makelaars")
+    return results  
+
+
+#[makelaar,adres,typewoning,opper,kamers,prijs,inc,status,pagina]
+# status = Verhuurd/Verhuurd onder voorbehoud/????
+def idee():
+    print("Makelaar idee checken...")
+    results = []
+    for i in range(1):
+        req = requests.get("https://www.makelaaridee.nl/woningaanbod/huur/groningen?street_postcode_city=Groningen&status=&rent_price_from=&rent_price_till=&construction_year_from=&construction_year_till=&living_area_from=&living_area_till=#objects")
+        soup = BeautifulSoup(req.text, 'html.parser')
+        huizen = soup.find_all("div", {"class": "relative shadow-card bg-white h-full"})
+        if huizen:
+            for huis in huizen:
+                try:
+                    status = huis.find("span", {"class": re.compile("status")}).text.strip()
+                    if status == "Verhuurd" or status == "Verhuurd onder voorbehoud":
+                        continue
+
+                    # # # link to page
+                    link = huis.find("a")['href']
+                    pagina = "https://www.makelaaridee.nl"+link
+                    req2 = requests.get(pagina)
+                    huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    adres = huissoup.find("h1", {"class": "text-2xl lg:text-4xl mb-0"}).text
+
+                    specs = huissoup.find("div", {"class": "accordion-content overflow-hidden"})
+                    for element in specs.find('div', text=re.compile("Specifiek:")):
+                        typewoning = element.find_next('div').text
+
+                    for element in specs.find('div', text=re.compile("Wonen:")):
+                        opper = element.find_next('div').text.split()[0]
+
+                    for element in specs.find('div', text=re.compile("Aantal kamers:")):
+                        kamers = element.find_next('div').text.split()[1][1:]
+
+                    for element in specs.find('div', text=re.compile("Prijs:")):
+                        prijs = element.find_next('div').text.split()[1].replace(".","")
+                    inc = "??exclusief??"
+                    results.append([idee.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                except Exception as e:
+                    #email_error(idee.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
+    print("Einde makelaar idee")
+    return results  
 
 # function to compare new results to active list of houses and update where needed
 def update(oldlist, newlist):
@@ -667,12 +878,18 @@ def main():
 
     rec_results = rec()
 
-    # print(time.perf_counter())
-    # # gruno()
+    gruno_results = gruno()
 
+    f1_riant_results = f1_riant()
+
+    maxx_results = maxx()
+
+    idee_results = idee()
+
+    # print(time.perf_counter())
     # print(len(nova_results),len(nulvijf_results),len(solide_results),len(mvgm_results),len(pandomo_results),len(eentweedriewonen_results),len(wbnn_results),len(rotsvast_results))
     # # combine all results from different sites
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rotsvast_results + rec_results
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rotsvast_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results
 #     for item in all_results:
 #         print(item)
     # all_results = wbnn_results + eentweedriewonen_results + rotsvast_results
