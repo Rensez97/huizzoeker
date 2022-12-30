@@ -41,9 +41,11 @@ def email_new(results, alert):
 
 
 # combine the data of the house into an appropiate sentence for the email
-def write_msg(uptodate):
+def write_msg(new,old):
     str_list = []
-    for item in uptodate:
+    for item in new:
+        str_list.append("(**Nieuw**) Potentieel huis gevonden op de {} met {} m2 voor {} {}!  {}".format(item[1],item[3], item[5], item[6], item[8]))
+    for item in old:
         str_list.append("Potentieel huis gevonden op de {} met {} m2 voor {} {}!  {}".format(item[1],item[3], item[5], item[6], item[8]))
         # if item[0] == "(Nieuw)":
         #     str_list.append("{}Potentieel huis gevonden met {} m2 voor {} {}!  {}".format(

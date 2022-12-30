@@ -65,7 +65,7 @@ def nova():
                     kamers = eval(labels[0].text.strip())
                 else:
                     kamers = 0
-                results.append([nova.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                results.append((nova.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
             except Exception as e:
                 email_error(nova.__name__, e, huis)
                 print("Oeps, iets is misgegaan")
@@ -127,7 +127,7 @@ def nulvijf():
                 specs = huissoup.find("div", {"id": "nav-features"})
                 for element in specs.find_all('td', text=re.compile("Type object")):
                     typewoning = element.find_next('td').text.split()[0]
-                results.append([nulvijf.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                results.append((nulvijf.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
             except Exception as e:
                 #email_error(nulvijf.__name__, e, huis)
                 print("Oeps, iets is misgegaan")
@@ -181,7 +181,7 @@ def solide():
                     # link to page
                     pagina = huis.find('a', href=True)['href']
                     if prijs.isnumeric():
-                        results.append([solide.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                        results.append((solide.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(solide.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -226,7 +226,7 @@ def mvgm():
                     inc = "Exclusief"
                     # link to page
                     pagina = huis.find('a', href=True)['href']
-                    results.append([mvgm.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((mvgm.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except AttributeError:
                     print(
                         "Geen data over object beschikbaar(waarschijnlijk parkeerplaats)")
@@ -295,7 +295,7 @@ def pandomo():
                     # find number of rooms
                     for element in specs.find_all('th', text=re.compile("Kamers")):
                         kamers = element.find_next('td').text.split()[1][1:]
-                    results.append([pandomo.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((pandomo.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(pandomo.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -324,8 +324,8 @@ def vdmeulen():
                             "span", {"class": "status"}).text.strip()
                     else:
                         status = "Beschikbaar"
-                    # if status != "Beschikbaar":
-                    #     continue
+                    if status != "Beschikbaar":
+                        continue
 
                     #finding adres
                     adres = huis.find("h3", {"class": "entry-title"}).text
@@ -335,8 +335,8 @@ def vdmeulen():
                     opper = specs[0].text[:-2]
                     kamers = specs[1].text
                     # finding costs of house
-                    # prijs = huis.find(
-                    #     "span", {"class": "price"}).text[1:-2].replace(".", "")
+                    prijs = huis.find(
+                        "span", {"class": "price"}).text[1:-2].replace(".", "")
 
                     #going to detailed page of house
                     pagina = huis.find('a', href=True)['href']
@@ -357,7 +357,9 @@ def vdmeulen():
                         inc = "inclusief"
                     if "exclusief" in content:
                         inc = "exclusief"
-                    # results.append([vdmeulen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    else:
+                        inc = "exclusief"
+                    results.append((vdmeulen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(vdmeulen.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -412,9 +414,9 @@ def eentweedriewonen():
 
                     # link to page
                     pagina = huis['onclick'][15:-2]
-                    results.append([eentweedriewonen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((eentweedriewonen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
-                    #email_error(eentweedriewonen.__name__, e, huis)
+                    email_error(eentweedriewonen.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
         page += 1
     print("Einde 123 wonen\n")
@@ -458,7 +460,7 @@ def wbnn():
                     site = huis.find("td", {"data-title": "Details"})
                     pagina = site.find("a")['href']
                     pagina = "https://wbnn.nl/"+pagina
-                    results.append([wbnn.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((wbnn.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(wbnn.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -509,9 +511,9 @@ def rotsvast():
                         "div", {"class": "residence-price"}).text.split()
                     prijs = totaal[1].replace(".", "").replace(",", ".").split(".")[0]
                     inc = totaal[-1]
-                    results.append([rotsvast.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((rotsvast.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
-                    #email_error(rotsvast.__name__, e, huis)
+                    email_error(rotsvast.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
     print("Einde rotsvast vastgoed\n")
     return results
@@ -568,9 +570,9 @@ def rec():
                     for item in kamers:
                         if "slaapkamers" in item.text:
                             kamers = item.text.split()[0]
-                    results.append([rec.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((rec.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
-                    #email_error(rec.__name__, e, huis)
+                    email_error(rec.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
     print("Einde Real estate consultancy(REC)\n")
     return results
@@ -619,7 +621,7 @@ def gruno():
                         kamers = 1
                     else:
                         kamers = kamers.text.strip()
-                    results.append([gruno.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((gruno.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(gruno.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -669,13 +671,12 @@ def f1_riant():
                     for element in specs.find_all('th', text=re.compile("Prijs")):
                         prijs = element.find_next('td').text.split()[1].split(",")[0].replace(".","")
                     inc = "exclusief"
-                    results.append([f1_riant.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((f1_riant.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(f1_riant.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
     print("Einde F1 riant makelaars\n")
     return results
-
 
 
 # status = Beschikbaar/Optie/Verhuurd
@@ -718,7 +719,7 @@ def maxx():
                     prijs = totaal[1].split(",")[0].replace(".","")
                     inc = totaal[3]
 
-                    results.append([maxx.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((maxx.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
                     email_error(maxx.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
@@ -726,60 +727,6 @@ def maxx():
     return results  
 
 
-
-#status = Nieuw/Verhuurd
-def zeeven():
-    print("Zeeven makelaars checken...")
-    results = []
-    for i in range(1):
-        req = requests.get("https://www.zeeven.nl/aanbod/woningaanbod/GRONINGEN/huur/aantal-80/")
-        soup = BeautifulSoup(req.text, 'html.parser')
-        search = soup.find("ul")
-        huizen = search.find("a", {"class": re.compile("al2woning aanbodEntry odd")})
-        print(huizen)
-        if huizen:
-            for huis in huizen:
-                try:
-                    print(huis)
-                    status = huis.find("span", {"class": re.compile("objectstatusbanner")})
-                    print(status)
-                    # #searching for status on home page for availability and skip iteration if unavailable
-                    # if huis.find("div", {"class": "object-image"}).text.strip() == "":
-                    #     status = "Beschikbaar"
-                    # else:
-                    #     status = huis.find("div", {"class": "object-image"}).text.strip()
-                    # if status != "Beschikbaar":
-                    #     continue
-
-                    # adres = huis.find("h5", {"class": "object-title"}).text.split("Groninge")[0]
-                    # typewoning = huis.find("div", {"class": "object-type"}).text.strip()
-                    
-                    # opper = huis.find("div", {"class": "col text-left"}).text.split()[0]
-                    # # kamers = huis.find("div", {"class": "col text-right"}).text.split()[0]
-
-                    # # # link to page
-                    # link = huis.find("a")['href']
-                    # pagina = "https://maxxhuren.nl"+link
-                    # req2 = requests.get(pagina)
-                    # huissoup = BeautifulSoup(req2.text, 'html.parser')
-
-                    # specs = huissoup.find("div", {"class": "col-4 col-md-3 p-3 info-left"}).text
-                    # kamers_index = specs.find("slaapkamer")
-                    # kamers = specs[kamers_index-2]
-
-                    # totaal = huissoup.find("h3", {"class": "text-red price"}).text.split()
-                    # prijs = totaal[1].split(",")[0].replace(".","")
-                    # inc = totaal[3]
-
-                    # results.append([zeeven.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
-                except Exception as e:
-                    #email_error(zeeven.__name__, e, huis)
-                    print("Oeps, iets is misgegaan")
-    print("Einde Zeeven makelaars")
-    return results  
-
-
-#[makelaar,adres,typewoning,opper,kamers,prijs,inc,status,pagina]
 # status = Verhuurd/Verhuurd onder voorbehoud/????
 def idee():
     print("Makelaar idee checken...")
@@ -795,7 +742,7 @@ def idee():
                     if status == "Verhuurd" or status == "Verhuurd onder voorbehoud":
                         continue
 
-                    # # # link to page
+                    # link to page
                     link = huis.find("a")['href']
                     pagina = "https://www.makelaaridee.nl"+link
                     req2 = requests.get(pagina)
@@ -816,12 +763,118 @@ def idee():
                     for element in specs.find('div', text=re.compile("Prijs:")):
                         prijs = element.find_next('div').text.split()[1].replace(".","")
                     inc = "??exclusief??"
-                    results.append([idee.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina])
+                    results.append((idee.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                 except Exception as e:
-                    #email_error(idee.__name__, e, huis)
+                    email_error(idee.__name__, e, huis)
                     print("Oeps, iets is misgegaan")
-    print("Einde makelaar idee")
+    print("Einde makelaar idee\n")
     return results  
+
+
+# evt zoeken naar status == beschikbaar op site zelf
+# status = Beschikbaar/Verhuurd/Verhuurd onder voorbehoud
+def bensverhuur():
+    print("Ben's verhuur checken...")
+    page = 1
+    results = []
+    for i in range(16):
+        req = requests.get("https://www.bensverhuurenbeheer.nl/aanbod/"+str(page))
+        soup = BeautifulSoup(req.text, 'html.parser')
+        search = soup.find("div", {"id": "verhuur"})
+        if search:
+            huizen = search.find_all("a",recursive=False)
+            for huis in huizen:
+                try:
+                    status = huis.find("div", {"class": "message"}).text.strip()
+                    if status != "Beschikbaar":
+                        continue
+
+                    img_src = huis.find("img")['src']
+                    img = "https://www.bensverhuurenbeheer.nl"+img_src
+                    # # link to page
+                    pagina = huis['href']
+                    req2 = requests.get(pagina)
+                    huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    header = huissoup.find("section", {"class": "header"})
+                    adres = header.find("h1").text.capitalize()
+                    prijs = header.find("h2", {"class": "price"}).text.split()[1].replace(".","")
+                    inc = "??exclusief??"
+
+                    specs = huissoup.find("section", {"class": "properties"})
+                    specslist = specs.find_all("p")
+                    for item in specslist:
+                        if "Soort Woonhuis" in item.text:
+                            typewoning = item.text.split("Soort Woonhuis")[1:]
+                        if "Woonoppervlakte" in item.text:
+                            opper_total = item.text.split("Woonoppervlakte")[1]
+                            opper = opper_total.split("m")[0]
+                        if "Aantal kamers" in item.text:
+                            kamers_total = item.text.split("Aantal kamers")[1]
+                            kamers = kamers_total.split(" ")[3]
+                    results.append((bensverhuur.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina,img))
+                except Exception as e:
+                    email_error(bensverhuur.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
+            page += 1
+    print("Einde Ben's verhuur\n")
+    return results  
+
+
+#[makelaar,adres,typewoning,opper,kamers,prijs,inc,status,pagina,img]
+# standaard op beschikbaar aanbod
+# status = Beschikbaar/Verhuurd/Verhuurd onder voorbehoud
+def corpowonen():
+    print("Corpo wonen checken...")
+    page = 1
+    results = []
+    for i in range(1):
+        req = requests.get("https://www.corpowonen.nl/aanbod/huur/Groningen/sorteer-adres-op/pagina-"+str(page))
+        soup = BeautifulSoup(req.text, 'html.parser')
+        huizen = soup.find_all("div", {"class": "object-row"})
+        if huizen:
+            for huis in huizen:
+                try:
+                    # status = ??
+                    # if status != "Beschikbaar":
+                    #     continue
+                    img_src = huis.find("img")['src']
+                    img = "https://www.corpowonen.nl"+img_src
+                    # link to page
+
+                    link = huis.find("a")['href']
+                    pagina = "https://www.corpowonen.nl"+link
+                    req2 = requests.get(pagina)
+                    huissoup = BeautifulSoup(req2.text, 'html.parser')
+
+                    header = huissoup.find("div", {"class": "address"})
+                    adres = header.find("h2").text
+
+  
+                    specs = huissoup.find("div", {"id": "kenmerken"})
+                    for element in specs.find('td', text=re.compile("Soort object")):
+                        typewoning = element.find_next('td').text.split(",")[0]
+
+                    for element in specs.find('td', text=re.compile("Prijs")):
+                        prijs = element.find_next('td').text.split()[1].replace(".","")
+                    inc = "??exclusief??"
+
+                    for element in specs.find('td', text=re.compile("Woonoppervlakte")):
+                        opper = element.find_next('td').text.split()[0]
+
+                    for element in specs.find('td', text=re.compile("Aantal kamers")):
+                        kamers = element.find_next('td').text.split()[2][1:]
+
+                    status = "Beschikbaar"
+                    results.append((corpowonen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina,img))
+                except Exception as e:
+                    email_error(corpowonen.__name__, e, huis)
+                    print("Oeps, iets is misgegaan")
+            page += 1
+    print("Einde Corpo wonen\n")
+    return results  
+
+
 
 # function to compare new results to active list of houses and update where needed
 def update(oldlist, newlist):
@@ -846,10 +899,11 @@ def update(oldlist, newlist):
     return oldlist, cnew
 
 
+
 def main():
 
     # set variables for m2(x), price excluded costs(y), price included costs(z)
-    x = 35
+    x = 30
     y = 850
     z = 950
 
@@ -886,54 +940,53 @@ def main():
 
     idee_results = idee()
 
+    bensverhuur_results = bensverhuur()
+
+    corpowonen_results = corpowonen()
+
+
     # print(time.perf_counter())
-    # print(len(nova_results),len(nulvijf_results),len(solide_results),len(mvgm_results),len(pandomo_results),len(eentweedriewonen_results),len(wbnn_results),len(rotsvast_results))
+
+    # # # zeeven()
+
+
     # # combine all results from different sites
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rotsvast_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results
-#     for item in all_results:
-#         print(item)
-    # all_results = wbnn_results + eentweedriewonen_results + rotsvast_results
-
-    #all_results = "LL"
-
-    # oldlist = [['()', '48', '90.', 'excl', 'https://050vastgoed.nl/woningaanbod/huur/groningen/galenuslaan/24-44?forsaleorrent=1&localityid=23523&locationofinterest=Groningen&moveunavailablelistingstothebottom=true&orderby=8&take=10'],
-    #            ['()', '41', '620', 'exlc',
-    #             'https://solideverhuur.nl/huurwoningen/groningen/4-eendrachtskade-9726cw/'],
-    #            ['(Nieuw)', '62', '700', 'excl', 'https://ikwilhuren.nu/huurwoningen/groningen/55-kajuit-90-t-m-208-en-lijzijde-7-t-m-19/kajuit-141'], ['(Nieuw)', '3', '333', 'excl', 'https://ikwilhuren.nu/huurwoningen/groningen/55-kajuit-90-t-m-208-en-lijzijde-7-t-m-19/kajuit-141']]
-    # newlist = [['48', '90.', 'excl', 'https://050vastgoed.nl/woningaanbod/huur/groningen/galenuslaan/24-44?forsaleorrent=1&localityid=23523&locationofinterest=Groningen&moveunavailablelistingstothebottom=true&orderby=8&take=10'],
-    #            ['41', '620', 'exlc',
-    #                'https://solideverhuur.nl/huurwoningen/groningen/4-eendrachtskade-9726cw/'],
-    #            ['62', '700', 'excl', 'https://ikwilhuren.nu/huurwoningen/groningen/55-kajuit-90-t-m-208-en-lijzijde-7-t-m-19/kajuit-141'], ['81', '850', '?', 'https://www.123wonen.nl/huur/groningen/eengezinswoning/grevingaheerd-4459-2']]
-    # oldlist2 = [['()', '48', '90.', 'excl', 'https://050vastgoed.nl/woningaanbod/huur/groningen/galenuslaan/24-44?forsaleorrent=1&localityid=23523&locationofinterest=Groningen&moveunavailablelistingstothebottom=true&orderby=8&take=10'], ['()', '41', '620', 'exlc', 'https://solideverhuur.nl/huurwoningen/groningen/4-eendrachtskade-9726cw/']] 
-    # test12 = [['wbnn', 'Zuilen', 'Eengezinswoning', '86', 2, '1175', 'excl.', 'Verhuurd', 'https://wbnn.nl/index.php?p=huizen&view=1421'], ['eentweedriewonen', 'Lunettenhof', 'Appartement', '51', '1 ', '1025', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/lunettenhof-4506-2'], ['eentweedriewonen', 'Briljantstraat', 'Tussenwoning', '131', '4 ', '1175', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/tussenwoning/briljantstraat-4509-2'], ['eentweedriewonen', 'Meeuwerderweg', 'Tussenwoning', '85', '2 ', '1350', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/tussenwoning/meeuwerderweg-4507-2'], ['eentweedriewonen', 'Hora Siccamasingel', 'Appartement', '85', '3 ', '1025', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/hora+siccamasingel-4500-2'], ['eentweedriewonen', 'Jozef Israëlsstraat', 'Bovenwoning', '120', '3 ', '1250', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/bovenwoning/jozef+isra%c3%ablsstraat-4452-2'], ['eentweedriewonen', 'Kleine Bergstraat', 'Studio', '15', '1 ', '530', 'inclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/studio/kleine+bergstraat-3608-2'], ['eentweedriewonen', 'Kleine Bergstraat', 'Studio', '32', '1 ', '835', 'inclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/studio/kleine+bergstraat-4270-2'], ['eentweedriewonen', 'Kleine Bergstraat', 'Studio', '18', '1 ', '505', 'inclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/studio/kleine+bergstraat-4504-2'], ['eentweedriewonen', 'Leeuwarderstraat', 'Bovenwoning', '95', '2 ', '1250', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/bovenwoning/leeuwarderstraat-4505-2'], ['eentweedriewonen', 'Hoge der A', 'Appartement', '38', '1 ', '840', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/hoge+der+a-4499-2'], ['eentweedriewonen', 'Helperveste', 'Flat (galerij/portiek)', '80', '2 ', '1300', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/flat+galerij-portiek/helperveste-4501-2'], ['eentweedriewonen', 'Fossemaheerd', 'Studio', '25', '1 ', '750', 'inclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/studio/fossemaheerd-4498-2']]
-    # # print(all_results)
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rotsvast_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results + bensverhuur_results + corpowonen_results
 
 
-    personal_list = []
-    with open("/home/huizzoeker/full_list.pkl","rb") as f2:
-        old_list = pickle.load(f2)
-        for item in old_list:
-            #print(item[3],type(item[3]),item[5],type(item[5]))
-            if int(item[3]) >= 30 and int(item[5]) <= 950:
-                personal_list.append(item)
-    # personal_list.append(['wbnn', 'Zuilen', 'Eengezinswoning', '94', 2, '1175', 'excl.', 'Verhuurd', 'https://wbnn.nl/index.php?p=huizen&view=1421'])
-    c = 0
+#     # all_results = wbnn_results + eentweedriewonen_results + rotsvast_results
+#     # all_results = "LL"
+#     print(len(all_results))
+#     print(len(gruno_results))
+
+    # op_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('gruno', 'Kerkstraat 267', 'Appartement', '50 ', '1', '950', 'incl.', 'Beschikbaar', 'https://www.grunoverhuur.nl/woning/kerkstraat-267-gerenoveerde-appartementen-in-de-voormalige-dansschool-van-der-vlag/')]
+    # np_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('test', 'ludostraat', 'Appartement', '50 ', '1', '900', 'incl.', 'Beschikbaar', 'www.google.com')]
+
+
+    new_personal_list = []
+    for item in all_results:
+        if int(item[3]) >= x and int(item[5]) <= z:
+            new_personal_list.append(item)
+
     with open("/home/huizzoeker/personal_list.pkl", "rb") as f:
         old_personal_list = pickle.load(f)
-        for item in personal_list:
-            if item not in old_personal_list:
-                c += 1
-    if c > 0:
-        text=write_msg(personal_list)
-        email_new(text,c)
+
+    op_set, np_set = set(old_personal_list), set(new_personal_list)
+    new_houses = np_set - op_set
+    old_houses = list(np_set - new_houses)
+
+    if len(new_houses) > 0:
+        text_email = write_msg(new_houses,old_houses)
+        email_new(text_email, len(new_houses))
         print("Email onderweg)")
 
+    with open("/home/huizzoeker/personal_list.pkl", "wb") as f:
+        pickle.dump(new_personal_list,f)
 
     with open("/home/huizzoeker/full_list.pkl", "wb") as f:
         pickle.dump(all_results,f)
 
-    with open("/home/huizzoeker/personal_list.pkl", "wb") as f:
-        pickle.dump(personal_list,f)
+
 
 
 
