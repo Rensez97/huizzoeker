@@ -876,30 +876,6 @@ def corpowonen():
 
 
 
-# function to compare new results to active list of houses and update where needed
-def update(oldlist, newlist):
-    cnew = 0
-    cdel = 0
-    for new in newlist:
-        new.insert(0, "()")
-        # update new status into old if already present
-        for old in oldlist:
-            if new[1:] == old[1:] and old[0] == "(Nieuw)":
-                old[0] = "()"
-        # append to list if item is new and mark as new
-        if new not in oldlist:
-            cnew += 1
-            new[0] = "(Nieuw)"
-            oldlist.append(new)
-    # delete item if not anymore online
-    for old in oldlist:
-        if old not in newlist:
-            cdel += 1
-            oldlist.remove(old)
-    return oldlist, cnew
-
-
-
 def main():
 
     # set variables for m2(x), price excluded costs(y), price included costs(z)
@@ -910,7 +886,7 @@ def main():
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print(time.perf_counter())
 
-    # result = [makelaar,adres,typewoning,opper,kamers,prijs,inc,status,link]
+    # # results are shown as: [makelaar,adres,typewoning,opper,kamers,prijs,inc,status,link]
 
     nova_results = nova()
 
@@ -947,17 +923,12 @@ def main():
 
     # print(time.perf_counter())
 
-    # # # zeeven()
+#   zeeven()
 
 
     # # combine all results from different sites
     all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rotsvast_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results + bensverhuur_results + corpowonen_results
 
-
-#     # all_results = wbnn_results + eentweedriewonen_results + rotsvast_results
-#     # all_results = "LL"
-#     print(len(all_results))
-#     print(len(gruno_results))
 
     # op_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('gruno', 'Kerkstraat 267', 'Appartement', '50 ', '1', '950', 'incl.', 'Beschikbaar', 'https://www.grunoverhuur.nl/woning/kerkstraat-267-gerenoveerde-appartementen-in-de-voormalige-dansschool-van-der-vlag/')]
     # np_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('test', 'ludostraat', 'Appartement', '50 ', '1', '900', 'incl.', 'Beschikbaar', 'www.google.com')]
@@ -965,8 +936,13 @@ def main():
 
     new_personal_list = []
     for item in all_results:
-        if int(item[3]) >= x and int(item[5]) <= z:
-            new_personal_list.append(item)
+        try:
+            print(item[3],type(item[3]))
+            if int(round(float(item[3]))) >= x and int(round(float(item[5]))) <= z:
+                new_personal_list.append(item)
+        except Exception as e:
+            print(e)
+
 
     with open("/home/huizzoeker/personal_list.pkl", "rb") as f:
         old_personal_list = pickle.load(f)
@@ -978,30 +954,13 @@ def main():
     if len(new_houses) > 0:
         text_email = write_msg(new_houses,old_houses)
         email_new(text_email, len(new_houses))
-        print("Email onderweg)")
+        print("Email is onderweg!")
 
     with open("/home/huizzoeker/personal_list.pkl", "wb") as f:
         pickle.dump(new_personal_list,f)
 
     with open("/home/huizzoeker/full_list.pkl", "wb") as f:
         pickle.dump(all_results,f)
-
-
-
-
-
-    # print(time.perf_counter())
-#     # load the existing house lists and update to the current situation
-#     if all_results:
-#         with open("current.pkl", "rb") as f:
-#             current = pickle.load(f)
-#             uptodate, cnew = update(current, all_results)
-#         if cnew > 0:
-#             text = write_msg(uptodate)
-#             email_new(text, cnew)
-#             print("Email is onderweg!")
-#         with open("current.pkl", 'wb') as f2:
-#             pickle.dump(uptodate, f2)
 
 
 if __name__ == "__main__":
