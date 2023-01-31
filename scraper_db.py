@@ -937,7 +937,6 @@ def main():
     new_personal_list = []
     for item in all_results:
         try:
-            print(item[3],type(item[3]))
             if int(round(float(item[3]))) >= x and int(round(float(item[5]))) <= z:
                 new_personal_list.append(item)
         except Exception as e:
