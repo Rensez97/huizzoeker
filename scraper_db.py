@@ -53,7 +53,9 @@ def nova():
                 #finding type of home and adres in topbar
                 breadcrumbs = huissoup.find("nav", {"class": "property-breadcrumbs"})
                 typewoning = breadcrumbs.find_all("li")[1].text.strip()
-                adres = huissoup.find("p", {"class": "rh_page__property_address"}).text.strip().split(",")[:2] #[nummer/straat,straat/buurt]
+                adres_list = huissoup.find("p", {"class": "rh_page__property_address"}).text.strip().split(",")[:2] #[nummer/straat,straat/buurt]
+                if len(adres_list) > 1:
+                    adres = adres_list[1]+" "+adres_list[0]
 
                 #finding details on m2 and number of rooms
                 #details = huis.find('div', {"class": "rh_property__row rh_property__meta_wrap"})
