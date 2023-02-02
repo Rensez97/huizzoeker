@@ -476,47 +476,50 @@ def wbnn():
 def rotsvast():
     print("Rotsvast vastgoed checken...")
     results = []
-    for i in range(1):
-        req = requests.get(
-            "https://www.rotsvast.nl/woningaanbod/?type=2&city=Groningen&office=0&count=30")
-        soup = BeautifulSoup(req.text, 'html.parser')
-        huizen = soup.find_all(
-            "div", {"class": "residence-gallery clickable-parent col-md-4"})
-        if huizen:
-            for huis in huizen:
-                try:
-                    # finding active status
-                    status = huis.find(
-                        "div", {"class": re.compile("status")}).text
-                    if status == "Topper":
-                        status = "Nieuw"
-                    if status != "Nieuw":
-                        continue
-                    adres = huis.find("div", {"class": "residence-street"}).text
+    try:
+        for i in range(1):
+            req = requests.get(
+                "https://www.rotsvast.nl/woningaanbod/?type=2&city=Groningen&office=0&count=30")
+            soup = BeautifulSoup(req.text, 'html.parser')
+            huizen = soup.find_all(
+                "div", {"class": "residence-gallery clickable-parent col-md-4"})
+            if huizen:
+                for huis in huizen:
+                    try:
+                        # finding active status
+                        status = huis.find(
+                            "div", {"class": re.compile("status")}).text
+                        if status == "Topper":
+                            status = "Nieuw"
+                        if status != "Nieuw":
+                            continue
+                        adres = huis.find("div", {"class": "residence-street"}).text
 
-                    # link to page
-                    pagina = huis.find("a")['href']
-                    req2 = requests.get(pagina)
-                    huissoup = BeautifulSoup(req2.text, 'html.parser')
-                    for element in huissoup.find_all('div', text="Soort"):
-                        typewoning = element.find_next('div').text.strip()
+                        # link to page
+                        pagina = huis.find("a")['href']
+                        req2 = requests.get(pagina)
+                        huissoup = BeautifulSoup(req2.text, 'html.parser')
+                        for element in huissoup.find_all('div', text="Soort"):
+                            typewoning = element.find_next('div').text.strip()
 
-                    # finding square feet
-                    # properties = huis.find(
-                    #     "div", {"class": "residence-properties"}).text.split()
-                    for element in huissoup.find_all('div', text="Oppervlakte (ca.)"):
-                        opper = element.find_next('div').text.strip().split()[0]
-                    for element in huissoup.find_all('div', text="Aantal slaapkamers"):
-                        kamers = element.find_next('div').text.strip()
-                    # finding costs of house
-                    totaal = huis.find(
-                        "div", {"class": "residence-price"}).text.split()
-                    prijs = totaal[1].replace(".", "").replace(",", ".").split(".")[0]
-                    inc = totaal[-1]
-                    results.append((rotsvast.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
-                except Exception as e:
-                    email_error(rotsvast.__name__, e, huis)
-                    print("Oeps, iets is misgegaan")
+                        # finding square feet
+                        # properties = huis.find(
+                        #     "div", {"class": "residence-properties"}).text.split()
+                        for element in huissoup.find_all('div', text="Oppervlakte (ca.)"):
+                            opper = element.find_next('div').text.strip().split()[0]
+                        for element in huissoup.find_all('div', text="Aantal slaapkamers"):
+                            kamers = element.find_next('div').text.strip()
+                        # finding costs of house
+                        totaal = huis.find(
+                            "div", {"class": "residence-price"}).text.split()
+                        prijs = totaal[1].replace(".", "").replace(",", ".").split(".")[0]
+                        inc = totaal[-1]
+                        results.append((rotsvast.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
+                    except Exception as e:
+                        email_error(rotsvast.__name__, e, huis)
+                        print("Oeps, iets is misgegaan")
+    except Exception as e:
+        print("Connection error")
     print("Einde rotsvast vastgoed\n")
     return results
 
