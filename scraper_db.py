@@ -951,9 +951,8 @@ def main():
     with open("/home/huizzoeker/personal_list.pkl", "rb") as f:
         old_personal_list = pickle.load(f)
 
-    op_set, np_set = set(old_personal_list), set(new_personal_list)
-    new_houses = np_set - op_set
-    old_houses = list(np_set - new_houses)
+    new_houses = [item for item in new_personal_list if item not in old_personal_list]
+    old_houses = [item for item in new_personal_list if item not in new_houses]
 
     if len(new_houses) > 0:
         text_email = write_msg(new_houses,old_houses)
