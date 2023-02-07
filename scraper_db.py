@@ -74,7 +74,7 @@ def nova():
                     print("House error")
             page += 1
     except Exception as e2:
-        email_error(nova.__name__, e2)
+        email_error(nova.__name__, e2,"")
         print("Connection error")
     print("Einde nova vastgoed\n")
     return results
@@ -140,7 +140,7 @@ def nulvijf():
                     print("House error")
             page += 10
     except Exception as e2:
-        email_error(nulvijf.__name__, e2)
+        email_error(nulvijf.__name__, e2,"")
         print("Connection error")
     print("Einde 050\n")
     return results
@@ -198,7 +198,7 @@ def solide():
                         print("House error")
                 page += 1
     except Exception as e2:
-        email_error(solide.__name__, e2)
+        email_error(solide.__name__, e2,"")
         print("Connection error")
     print("Einde solide vastgoed\n")
     return results
@@ -250,7 +250,7 @@ def mvgm():
                         print("House error")
             page += 1
     except Exception as e2:
-        email_error(mvgm.__name__, e2)
+        email_error(mvgm.__name__, e2,"")
         print("Connection error")
     print("Einde MVGM\n")
     return results
@@ -320,7 +320,7 @@ def pandomo():
                         print("House error")
             page += 1
     except Exception as e2:
-        email_error(pandomo.__name__, e2)
+        email_error(pandomo.__name__, e2,"")
         print("Connection error")
     print("Einde pandomo makelaars\n")
     return results
@@ -388,7 +388,7 @@ def vdmeulen():
                         print("House error")
             page += 1
     except Exception as e2:
-        email_error(vdmeulen.__name__, e2)
+        email_error(vdmeulen.__name__, e2,"")
         print("Connection error")
     print("Einde van der Meulen makelaars\n")
     return results
@@ -447,7 +447,7 @@ def eentweedriewonen():
                         print("House error")
             page += 1
     except Exception as e2:
-        email_error(eentweedriewonen.__name__, e2)
+        email_error(eentweedriewonen.__name__, e2,"")
         print("Connection error")
     print("Einde 123 wonen\n")
     return results
@@ -497,7 +497,7 @@ def wbnn():
                         print("House error")
             page += 1
     except Exception as e2:
-        email_error(wbnn.__name__, e2)
+        email_error(wbnn.__name__, e2,"")
         print("Connection error")
     print("Einde Woonbemiddeling Noord-Nederland\n")
     return results
@@ -551,7 +551,7 @@ def rotsvast():
                         email_error(rotsvast.__name__, e, huis)
                         print("House error")
     except Exception as e2:
-        email_error(rotsvast.__name__, e2)
+        email_error(rotsvast.__name__, e2,"")
         print("Connection error")
     print("Einde rotsvast vastgoed\n")
     return results
@@ -611,7 +611,7 @@ def rec():
                                 kamers = item.text.split()[0]
                         results.append((rec.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                     except Exception as e:
-                        email_error(rec.__name__, e, huis)
+                        email_error(rec.__name__, e, huis,"")
                         print("House error")
     except Exception as e2:
         email_error(rec.__name__, e2)
@@ -666,7 +666,7 @@ def gruno():
                             kamers = kamers.text.strip()
                         results.append((gruno.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                     except Exception as e:
-                        email_error(gruno.__name__, e, huis)
+                        email_error(gruno.__name__, e, huis,"")
                         print("House error")
                 page += 1
     except Exception as e2:
@@ -720,7 +720,7 @@ def f1_riant():
                         inc = "exclusief"
                         results.append((f1_riant.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                     except Exception as e:
-                        email_error(f1_riant.__name__, e, huis)
+                        email_error(f1_riant.__name__, e, huis,"")
                         print("House error")
     except Exception as e2:
         email_error(f1_riant.__name__, e2)
@@ -772,7 +772,7 @@ def maxx():
 
                         results.append((maxx.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                     except Exception as e:
-                        email_error(maxx.__name__, e, huis)
+                        email_error(maxx.__name__, e, huis,"")
                         print("House error")
     except Exception as e2:
         email_error(maxx.__name__, e2)
@@ -820,7 +820,7 @@ def idee():
                         inc = "??exclusief??"
                         results.append((idee.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina))
                     except Exception as e:
-                        email_error(idee.__name__, e, huis)
+                        email_error(idee.__name__, e, huis,"")
                         print("House error")
     except Exception as e2:
         email_error(idee.__name__, e2)
@@ -873,7 +873,7 @@ def bensverhuur():
                                 kamers = kamers_total.split(" ")[3]
                         results.append((bensverhuur.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina,img))
                     except Exception as e:
-                        email_error(bensverhuur.__name__, e, huis)
+                        email_error(bensverhuur.__name__, e, huis,"")
                         print("House error")
                 page += 1
     except Exception as e2:
@@ -931,14 +931,14 @@ def corpowonen():
                         status = "Beschikbaar"
                         results.append((corpowonen.__name__,adres,typewoning,opper,kamers,prijs,inc,status,pagina,img))
                     except Exception as e:
-                        email_error(corpowonen.__name__, e, huis)
+                        email_error(corpowonen.__name__, e, huis,"")
                         print("House error")
                 page += 1
     except Exception as e2:
         email_error(corpowonen.__name__, e2)
         print("Connection error")
     print("Einde Corpo wonen\n")
-    return results  
+    return results
 
 
 
