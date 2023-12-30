@@ -26,7 +26,7 @@ def email_new(results, alert):
     message = EmailMessage()
     message.set_content(results)
     message['FROM'] = "huizzoeker@outlook.com"
-    message['TO'] = ["rensevdzee@hotmail.com"]
+    message['TO'] = ["rensevdzee@hotmail.com","lottejgr@aol.com"]
     if alert == 1:
         message['SUBJECT'] = "1 nieuwe osso gevonden"
     if alert > 1:
@@ -43,10 +43,14 @@ def email_new(results, alert):
 # combine the data of the house into an appropiate sentence for the email
 def write_msg(new,old):
     str_list = []
-    for item in new:
-        str_list.append("(**Nieuw**) Potentieel huis gevonden op de {} met {} m2 voor {} {}!  {}".format(item[1],item[3], item[5], item[6], item[8]))
-    for item in old:
-        str_list.append("Potentieel huis gevonden op de {} met {} m2 voor {} {}!  {}".format(item[1],item[3], item[5], item[6], item[8]))
+    if len(new) > 0:
+        str_list.append("**Nieuw**\n")
+        for item in new:
+            str_list.append("{} met {} m2 voor {} {}!  {}".format(item[1],item[3], item[5], item[6], item[8]))
+    if len(old) > 0:
+        str_list.append("\n\n**Oud**\n")
+        for item in old:
+            str_list.append("{} met {} m2 voor {} {}!  {}".format(item[1],item[3], item[5], item[6], item[8]))
         # if item[0] == "(Nieuw)":
         #     str_list.append("{}Potentieel huis gevonden met {} m2 voor {} {}!  {}".format(
         #         item[0], item[1], item[2], item[3], item[4]))
