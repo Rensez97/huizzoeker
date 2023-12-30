@@ -988,7 +988,7 @@ def main():
 
     wbnn_results = wbnn()
 
-    rotsvast_results = rotsvast()
+    # rotsvast_results = rotsvast()
 
     rec_results = rec()
 
@@ -1007,7 +1007,7 @@ def main():
 
     # print(time.perf_counter())
 
-    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rotsvast_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results + bensverhuur_results + corpowonen_results
+    all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + vdmeulen_results + eentweedriewonen_results +  wbnn_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results + bensverhuur_results + corpowonen_results
 #     print(len(all_results))
 #     print(all_results)
 
@@ -1037,7 +1037,7 @@ def main():
     if len(new_houses) > 0:
         text_email = write_msg(new_houses,old_houses)
         email_new(text_email, len(new_houses))
-        print("Email onderweg)")
+        print("Email onderweg")
 
     with open(file_path+"personal_list.pkl", "wb") as f:
         pickle.dump(new_personal_list,f)
