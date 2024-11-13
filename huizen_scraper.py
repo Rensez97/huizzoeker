@@ -950,12 +950,13 @@ def corpowonen():
 
 def main():
 
-    if sys.argv[1] == "0":
+    if sys.argv[1] == "home":
         file_path = ""
-    if sys.argv[1] == "1":
+    if sys.argv[1] == "server":
         file_path = "/home/huizzoeker/"
-    x = int(sys.argv[2])
-    z = int(sys.argv[3])
+    # x = int(sys.argv[2])
+    # z = int(sys.argv[3])
+    # users = sys.argv[4]
 
     # with open(file_path+"full_list.pkl", "rb") as f:
     #     old_personal_list = pickle.load(f)
@@ -1019,31 +1020,44 @@ def main():
 #     # op_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('gruno', 'Kerkstraat 267', 'Appartement', '50 ', '1', '950', 'incl.', 'Beschikbaar', 'https://www.grunoverhuur.nl/woning/kerkstraat-267-gerenoveerde-appartementen-in-de-voormalige-dansschool-van-der-vlag/')]
 #     # np_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('test', 'ludostraat', 'Appartement', '50 ', '1', '900', 'incl.', 'Beschikbaar', 'www.google.com')]
 
-    new_personal_list = []
-    for item in all_results:
+
+    users = [['MM',50,1500],['SE',40,1200]]
+
+    for user in users:
+        if user[0] == 'MM':
+            email_users = ["melvin-r-braam@hotmail.com", "bakker.m.a.g@gmail.com"]
+        if user[0] == 'SE':
+            email_users = ["r.bouma98@gmail.com", "esthermuurman00@gmail.com"]
+
+        new_personal_list = []
+        for item in all_results:
+            try:
+                # if int(round(float(item[3]))) >= x and int(round(float(item[5]))) <= z and int(round(float(item[4]))) >= b:
+                if int(round(float(item[3]))) >= user[1] and int(round(float(item[5]))) <= user[2]:
+                    new_personal_list.append(item)
+            except Exception as e:
+                print(e)
+
         try:
-            # if int(round(float(item[3]))) >= x and int(round(float(item[5]))) <= z and int(round(float(item[4]))) >= b:
-            if int(round(float(item[3]))) >= x and int(round(float(item[5]))) <= z:
-                new_personal_list.append(item)
+            with open(file_path+users[0]+"_personal_list.pkl", "rb") as f:
+                old_personal_list = pickle.load(f)
+        except:
+            old_personal_list = []
+
+        new_houses = [item for item in new_personal_list if item not in old_personal_list]
+        old_houses = [item for item in new_personal_list if item not in new_houses]
+
+        try:
+            if len(new_houses) > 0:
+                text_email = write_msg(new_houses,old_houses)
+                email_new(email_users, text_email, len(new_houses))
+                print("Email onderweg")
         except Exception as e:
+            email_error("E-mail",e,"")
             print(e)
 
-    with open(file_path+"personal_list.pkl", "rb") as f:
-        old_personal_list = pickle.load(f)
-
-    new_houses = [item for item in new_personal_list if item not in old_personal_list]
-    old_houses = [item for item in new_personal_list if item not in new_houses]
-
-    try:
-        if len(new_houses) > 0:
-            text_email = write_msg(new_houses,old_houses)
-            email_new(text_email, len(new_houses))
-            print("Email onderweg")
-    except Exception as e:
-        print(e)
-
-    with open(file_path+"personal_list.pkl", "wb") as f:
-        pickle.dump(new_personal_list,f)
+        with open(file_path+users[0]+"_personal_list.pkl", "wb") as f:
+            pickle.dump(new_personal_list,f)
 
     with open(file_path+"full_list.pkl", "wb") as f:
         pickle.dump(all_results,f)
