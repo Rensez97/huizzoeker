@@ -1051,7 +1051,7 @@ def main():
             if len(new_houses) > 0:
                 text_email = write_msg(new_houses,old_houses)
                 email_new(email_users, text_email, len(new_houses))
-                print("Email onderweg")
+                print("Email onderweg naar "+user[0])
         except Exception as e:
             email_error("E-mail",e,"")
             print(e)
