@@ -1056,7 +1056,7 @@ def main():
             email_error("E-mail",e,"")
             print(e)
 
-        with open(file_path+users[0]+"_personal_list.pkl", "wb") as f:
+        with open(file_path+user[0]+"_personal_list.pkl", "wb") as f:
             pickle.dump(new_personal_list,f)
 
     with open(file_path+"full_list.pkl", "wb") as f:
