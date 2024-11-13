@@ -8,7 +8,7 @@ from email.message import EmailMessage
 def email_error(website, error, huis):
     message = EmailMessage()
     message.set_content(str(error)+'\n'+str(huis))
-    message['FROM'] = "huizzoeker@outlook.com"
+    message['FROM'] = "huizzoeker@gmail.com"
     message['TO'] = ["rensevdzee@hotmail.com"]
     message['SUBJECT'] = "Error bij "+website
 
@@ -30,7 +30,7 @@ def email_new(email_users, results, alert):
     #print(products, new_products, updated_products)
     message = EmailMessage()
     message.set_content(results)
-    message['FROM'] = "huizzoeker@outlook.com"
+    message['FROM'] = "huizzoeker@gmail.com"
     message['TO'] = email_users
     if alert == 1:
         message['SUBJECT'] = "1 nieuwe osso gevonden"
