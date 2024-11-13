@@ -1019,8 +1019,7 @@ def main():
 
 #     # op_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('gruno', 'Kerkstraat 267', 'Appartement', '50 ', '1', '950', 'incl.', 'Beschikbaar', 'https://www.grunoverhuur.nl/woning/kerkstraat-267-gerenoveerde-appartementen-in-de-voormalige-dansschool-van-der-vlag/')]
 #     # np_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('test', 'ludostraat', 'Appartement', '50 ', '1', '900', 'incl.', 'Beschikbaar', 'www.google.com')]
-
-
+    
     users = [['MM',50,1500],['SE',40,1200]]
 
     for user in users:
@@ -1039,7 +1038,7 @@ def main():
                 print(e)
 
         try:
-            with open(file_path+users[0]+"_personal_list.pkl", "rb") as f:
+            with open(file_path+user[0]+"_personal_list.pkl", "rb") as f:
                 old_personal_list = pickle.load(f)
         except:
             old_personal_list = []
@@ -1049,8 +1048,8 @@ def main():
 
         try:
             if len(new_houses) > 0:
-                text_email = write_msg(new_houses,old_houses)
-                email_new(email_users, text_email, len(new_houses))
+                # text_email = write_msg(new_houses,old_houses)
+                # email_new(email_users, text_email, len(new_houses))
                 print("Email onderweg naar "+user[0])
         except Exception as e:
             email_error("E-mail",e,"")
