@@ -1,11 +1,16 @@
 import ssl
 import smtplib
+import os
 
+from dotenv import load_dotenv
 from email.message import EmailMessage
 
 
 # email the error if there has happened something faulty
 def email_error(website, error, huis):
+    load_dotenv()
+    email_smtp = os.getenv("EMAIL_SMTP")
+
     message = EmailMessage()
     message.set_content(str(error)+'\n'+str(huis))
     message['FROM'] = "huizzoeker@gmail.com"
@@ -13,21 +18,15 @@ def email_error(website, error, huis):
     message['SUBJECT'] = "Error bij "+website
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(message['FROM'], "raxakvbumsspboud")
+        smtp.login(message['FROM'], email_smtp)
         smtp.send_message(message)
         
-    # context = ssl.create_default_context()
-    # # set up SMTP server
-    # with smtplib.SMTP('smtp-mail.outlook.com', 587) as smtp:
-    #     smtp.starttls(context=context)
-    #     smtp.login(message['FROM'], "Ludosanders")
-    #     smtp.send_message(message)
-    #     smtp.quit()
-
 
 # email the results if there has been new houses spotted
 def email_new(email_users, results, alert):
-    #print(products, new_products, updated_products)
+    load_dotenv()
+    email_smtp = os.getenv("EMAIL_SMTP")
+
     message = EmailMessage()
     message.set_content(results)
     message['FROM'] = "huizzoeker@gmail.com"
@@ -38,16 +37,8 @@ def email_new(email_users, results, alert):
         message['SUBJECT'] = str(alert)+" nieuwe ossos gevonden"
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(message['FROM'], "raxakvbumsspboud")
+        smtp.login(message['FROM'], email_smtp)
         smtp.send_message(message)
-
-    # context = ssl.create_default_context()
-    # # set up SMTP server
-    # with smtplib.SMTP('smtp-mail.outlook.com', 587) as smtp:
-    #     smtp.starttls(context=context)
-    #     smtp.login(message['FROM'], "Ludosanders")
-    #     smtp.send_message(message)
-    #     smtp.quit()
 
 
 # combine the data of the house into an appropiate sentence for the email

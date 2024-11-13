@@ -954,72 +954,29 @@ def main():
         file_path = ""
     if sys.argv[1] == "server":
         file_path = "/home/huizzoeker/"
-    # x = int(sys.argv[2])
-    # z = int(sys.argv[3])
-    # users = sys.argv[4]
-
-    # with open(file_path+"full_list.pkl", "rb") as f:
-    #     old_personal_list = pickle.load(f)
-    # for item in old_personal_list:
-    #     print(item)
-    # set variables for m2(x), price excluded costs(y), price included costs(z), (bed?)rooms(b)
-    # x = 50
-    # y = 1400
-    # z = 1500
-    # b = 2
 
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print(time.perf_counter())
 
-    # result = [makelaar,adres,typewoning,opper,kamers,prijs,inc,status,link]
-
     nova_results = nova()
-
     nulvijf_results = nulvijf()
-
     solide_results = solide()
-
     mvgm_results = mvgm()
-
     pandomo_results = pandomo()
-
     # vdmeulen_results = vdmeulen()
-
     eentweedriewonen_results = eentweedriewonen()
-
     wbnn_results = wbnn()
-
     # rotsvast_results = rotsvast()
-
     rec_results = rec()
-
     gruno_results = gruno()
-
     f1_riant_results = f1_riant()
-
     maxx_results = maxx()
-
     idee_results = idee()
-
     bensverhuur_results = bensverhuur()
-
     corpowonen_results = corpowonen()
 
-
-    # print(time.perf_counter())
-
     all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + eentweedriewonen_results +  wbnn_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results + bensverhuur_results + corpowonen_results
-#     print(len(all_results))
-#     print(all_results)
 
-# #     # all_results = wbnn_results + eentweedriewonen_results + rotsvast_results
-# #     # all_results = "LL"
-# #     print(len(all_results))
-# #     print(len(gruno_results))
-
-#     # op_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('gruno', 'Kerkstraat 267', 'Appartement', '50 ', '1', '950', 'incl.', 'Beschikbaar', 'https://www.grunoverhuur.nl/woning/kerkstraat-267-gerenoveerde-appartementen-in-de-voormalige-dansschool-van-der-vlag/')]
-#     # np_list = [('mvgm', 'Planetenlaan 69', '?', '95', '2', '945', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-69'), ('mvgm', 'Planetenlaan 41', '?', '95', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-41'), ('mvgm', 'Planetenlaan 401', '?', '44', '3', '875', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/2362-planetenlaan-203-t-m-517-alleen-oneven/planetenlaan-401'), ('mvgm', 'Planetenlaan 161', '?', '90', '3', '950', 'Exclusief', 'Nieuw', 'https://ikwilhuren.nu/huurwoningen/groningen/63-planetenlaan-23-t-m-201/planetenlaan-161'), ('eentweedriewonen', 'Boteringeplaats', 'Appartement', '50', '1 ', '950', 'exclusief', 'Beschikbaar', 'https://www.123wonen.nl/huur/groningen/appartement/boteringeplaats-4535-2'), ('test', 'ludostraat', 'Appartement', '50 ', '1', '900', 'incl.', 'Beschikbaar', 'www.google.com')]
-    
     users = [['MM',50,1500],['SE',40,1200]]
 
     for user in users:
@@ -1031,7 +988,6 @@ def main():
         new_personal_list = []
         for item in all_results:
             try:
-                # if int(round(float(item[3]))) >= x and int(round(float(item[5]))) <= z and int(round(float(item[4]))) >= b:
                 if int(round(float(item[3]))) >= user[1] and int(round(float(item[5]))) <= user[2]:
                     new_personal_list.append(item)
             except Exception as e:
@@ -1048,8 +1004,8 @@ def main():
 
         try:
             if len(new_houses) > 0:
-                # text_email = write_msg(new_houses,old_houses)
-                # email_new(email_users, text_email, len(new_houses))
+                text_email = write_msg(new_houses,old_houses)
+                email_new(email_users, text_email, len(new_houses))
                 print("Email onderweg naar "+user[0])
         except Exception as e:
             email_error("E-mail",e,"")
