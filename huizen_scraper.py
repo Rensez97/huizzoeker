@@ -977,7 +977,7 @@ def main():
 
     all_results = nova_results + nulvijf_results + solide_results + mvgm_results + pandomo_results + eentweedriewonen_results +  wbnn_results + rec_results + gruno_results + f1_riant_results + maxx_results + idee_results + bensverhuur_results + corpowonen_results
 
-    users = [['MM',50,1500],['SE',40,1200]]
+    users = [['SE',40,1200]]
 
     for user in users:
         if user[0] == 'MM':
